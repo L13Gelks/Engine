@@ -16,11 +16,6 @@ public class Window {
     private final String windowName;
     private long glfwWindow;
 
-    public float r;
-    public float g;
-    public float b;
-    public float a;
-
     private static Window window = null;
 
     private static Scene currentScene;
@@ -29,10 +24,6 @@ public class Window {
         this.height = 760;
         this.width = 1360;
         this.windowName = "Game";
-        r = 0.0f;
-        g = 0.0f;
-        b = 0.0f;
-        a = 0.0f;
     }
 
     public static void changeScene(int newScene){
@@ -59,7 +50,6 @@ public class Window {
     }
 
     public void run(){
-        System.out.println(Version.getVersion());
         init();
         loop();
         //Free memory
@@ -117,7 +107,7 @@ public class Window {
             //Poll Events
             glfwPollEvents();
 
-            glClearColor(r, g, b, a);
+            glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
             if(KeyboardListener.isKeyPressed(GLFW_KEY_SPACE)){
