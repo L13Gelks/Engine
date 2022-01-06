@@ -3,6 +3,7 @@ package Engine;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import util.Time;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -12,15 +13,42 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
     private int width, height;
-    private String windowName;
+    private final String windowName;
     private long glfwWindow;
 
+    public float r;
+    public float g;
+    public float b;
+    public float a;
+
     private static Window window = null;
+
+    private static Scene currentScene;
     //private thus only one instance exists
     private Window(){
         this.height = 760;
         this.width = 1360;
         this.windowName = "Game";
+        r = 0.0f;
+        g = 0.0f;
+        b = 0.0f;
+        a = 0.0f;
+    }
+
+    public static void changeScene(int newScene){
+        switch (newScene){
+            case 0:
+                currentScene = new LevelEditorScene();
+                currentScene.init();
+                break;
+            case 1:
+                currentScene = new LevelScene();
+                currentScene.init();
+                break;
+            default:
+                assert false : "Unknown scene: " + newScene ;
+                break;
+        }
     }
 
     public static Window get(){
@@ -73,22 +101,41 @@ public class Window {
         //Make window visible
         glfwShowWindow(glfwWindow);
         GL.createCapabilities();
+
+        //Init Scene
+        Window.changeScene(0);
     }
 
 
     public void loop(){
+        //Init timers
+        float beginTime = Time.getTime();
+        float endTime = Time.getTime();
+        float dt = -1.0f;
+
         while(!glfwWindowShouldClose(glfwWindow)){
             //Poll Events
             glfwPollEvents();
 
-            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
             if(KeyboardListener.isKeyPressed(GLFW_KEY_SPACE)){
                 System.out.println("Space key is pressed");
             }
 
+            //
+            if(dt >= 0){
+                currentScene.update(dt);
+            }
+            //
+
             glfwSwapBuffers(glfwWindow);
+
+            //Calculate delta time
+            endTime = Time.getTime();
+            dt = endTime - beginTime;
+            beginTime = endTime;
         }
     }
 }
