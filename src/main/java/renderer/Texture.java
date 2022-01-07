@@ -11,6 +11,8 @@ import static org.lwjgl.stb.STBImage.*;
 public class Texture {
     private String filepath;
     private int textureID;
+    private int textureWidth, textureHeight;
+
     public Texture(String filepath){
         this.filepath = filepath;
         //Generate textures on gpu
@@ -31,6 +33,9 @@ public class Texture {
         ByteBuffer image = stbi_load(filepath, width, height, channels, 0);
 
         if(image != null){
+            this.textureWidth = width.get(0);
+            this.textureHeight = height.get(0);
+
             if(channels.get(0) == 3){
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width.get(0), height.get(0),
                         0, GL_RGB, GL_UNSIGNED_BYTE, image);
@@ -46,6 +51,14 @@ public class Texture {
         }
 
         stbi_image_free(image);
+    }
+
+    public int getTextureWidth(){
+        return textureWidth;
+    }
+
+    public int getTextureHeight(){
+        return textureHeight;
     }
 
     public void bind(){
