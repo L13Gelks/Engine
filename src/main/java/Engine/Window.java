@@ -105,8 +105,8 @@ public class Window {
 
     public void loop(){
         //Init timers
-        float beginTime = Time.getTime();
-        float endTime = Time.getTime();
+        float beginTime = (float)glfwGetTime();
+        float endTime = (float)glfwGetTime();
         float dt = -1.0f;
 
         while(!glfwWindowShouldClose(glfwWindow)){
@@ -129,7 +129,7 @@ public class Window {
             glfwSwapBuffers(glfwWindow);
 
             //Calculate delta time
-            endTime = Time.getTime();
+            endTime = (float)glfwGetTime();
             dt = endTime - beginTime;
             beginTime = endTime;
         }
