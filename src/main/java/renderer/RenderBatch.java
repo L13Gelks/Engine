@@ -3,6 +3,7 @@ package renderer;
 import Engine.Window;
 import components.SpriteRenderer;
 import org.joml.Vector4f;
+import util.AssetPool;
 
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL15.*;
@@ -32,7 +33,7 @@ public class RenderBatch {
     private Shader shader;
 
     public RenderBatch(int maxBatchSize){
-        shader = new Shader("assets/shaders/default.glsl");
+        shader = AssetPool.getShader("assets/shaders/default.glsl");
         shader.compile();
         this.sprites = new SpriteRenderer[maxBatchSize];
         this.maxBatchSize = maxBatchSize;
