@@ -19,10 +19,12 @@ public class Window {
     private static Window window = null;
 
     private static Scene currentScene;
+
+    private ImGuiLayer imGuiLayer;
     //private thus only one instance exists
     private Window(){
-        this.height = 760;
-        this.width = 1360;
+        this.height = 1080;
+        this.width = 1920;
         this.windowName = "Game";
     }
 
@@ -89,6 +91,10 @@ public class Window {
         glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
         glfwSetScrollCallback(glfwWindow, MouseListener::mouseScrollCallback);
         glfwSetKeyCallback(glfwWindow, KeyboardListener::KeyboardCallback);
+        glfwSetWindowSizeCallback(glfwWindow, (w, newWidth, newHeight) -> {
+            Window.setWidth(newWidth);
+            Window.setHeight(newHeight);
+        });
         //OpenGL context
         glfwMakeContextCurrent(glfwWindow);
         //Enable V-Sync
@@ -100,6 +106,8 @@ public class Window {
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        this.imGuiLayer = new ImGuiLayer(glfwWindow);
+        this.imGuiLayer.initImGui();
 
         //Init Scene
         Window.changeScene(0);
@@ -128,7 +136,7 @@ public class Window {
                 currentScene.update(dt);
             }
             //
-
+            this.imGuiLayer.update(dt, currentScene);
             glfwSwapBuffers(glfwWindow);
 
             //Calculate delta time
@@ -136,5 +144,20 @@ public class Window {
             dt = endTime - beginTime;
             beginTime = endTime;
         }
+    }
+    public static int getWidth(){
+        return get().width;
+    }
+
+    public static int getHeight(){
+        return get().height;
+    }
+
+    public static void setWidth(int width){
+        get().width = width;
+    }
+
+    public static void setHeight(int height){
+        get().height = height;
     }
 }
