@@ -2,6 +2,7 @@ package Engine;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import renderer.DebugDraw;
 import scenes.LevelEditorScene;
 import scenes.LevelScene;
 import scenes.Scene;
@@ -24,8 +25,8 @@ public class Window {
     private ImGuiLayer imGuiLayer;
     //private thus only one instance exists
     private Window(){
-        this.height = 1080;
-        this.width = 1920;
+        this.height = 760;
+        this.width = 1360;
         this.windowName = "Game";
     }
 
@@ -80,8 +81,8 @@ public class Window {
         //Configure GLFW
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-        glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+        //glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        //glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
         //Create Window
         glfwWindow = glfwCreateWindow(this.width, this.height, this.windowName, NULL, NULL);
         if(glfwWindow == NULL){
@@ -125,15 +126,14 @@ public class Window {
             //Poll Events
             glfwPollEvents();
 
-            glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            DebugDraw.beginFrame();
 
-            if(KeyboardListener.isKeyPressed(GLFW_KEY_SPACE)){
-                System.out.println("Space key is pressed");
-            }
+            glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
 
             //
             if(dt >= 0){
+                DebugDraw.draw();
                 currentScene.update(dt);
             }
             //
