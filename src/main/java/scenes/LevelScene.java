@@ -1,6 +1,6 @@
-package Engine;
+package scenes;
 
-public class LevelScene extends Scene{
+public class LevelScene extends Scene {
     public LevelScene(){
         System.out.println("Level Scene");
     }

@@ -1,6 +1,5 @@
 package components;
 
-import Engine.Component;
 import Engine.Transform;
 import imgui.ImGui;
 import org.joml.Vector2f;
@@ -8,23 +7,23 @@ import org.joml.Vector4f;
 import renderer.Texture;
 
 public class SpriteRenderer extends Component {
-    private Vector4f color;
-    private Sprite sprite;
-    private boolean isDirty = false;
+    private Vector4f color = new Vector4f(1, 1,1 ,1);
+    private Sprite sprite = new Sprite();
+    private transient boolean isDirty = true;
 
-    private Transform lastTransform;
+    private transient Transform lastTransform;
 
-    public SpriteRenderer(Vector4f color){
-        this.color = color;
-        this.sprite = new Sprite(null);
-        this.isDirty = true;
-    }
-
-    public SpriteRenderer(Sprite sprite){
-        this.color = new Vector4f(1,1,1,1);
-        this.sprite = sprite;
-        this.isDirty = true;
-    }
+//    public SpriteRenderer(Vector4f color){
+//        this.color = color;
+//        this.sprite = new Sprite(null);
+//        this.isDirty = true;
+//    }
+//
+//    public SpriteRenderer(Sprite sprite){
+//        this.color = new Vector4f(1,1,1,1);
+//        this.sprite = sprite;
+//        this.isDirty = true;
+//    }
 
     @Override
     public void start() {

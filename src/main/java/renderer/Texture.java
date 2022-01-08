@@ -13,7 +13,7 @@ public class Texture {
     private int textureID;
     private int textureWidth, textureHeight;
 
-    public Texture(String filepath){
+    public void init(String filepath){
         this.filepath = filepath;
         //Generate textures on gpu
         textureID = glGenTextures();
@@ -67,5 +67,9 @@ public class Texture {
 
     public void unbind(){
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    public int getID(){
+        return textureID;
     }
 }
