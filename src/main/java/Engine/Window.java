@@ -3,6 +3,7 @@ package Engine;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import renderer.DebugDraw;
+import renderer.FrameBuffer;
 import scenes.LevelEditorScene;
 import scenes.LevelScene;
 import scenes.Scene;
@@ -23,6 +24,8 @@ public class Window {
     private static Scene currentScene;
 
     private ImGuiLayer imGuiLayer;
+
+    private FrameBuffer frameBuffer;
     //private thus only one instance exists
     private Window(){
         this.height = 760;
@@ -111,6 +114,9 @@ public class Window {
         this.imGuiLayer = new ImGuiLayer(glfwWindow);
         this.imGuiLayer.initImGui();
 
+        frameBuffer = new FrameBuffer(1360, 760);
+        glViewport(0,0, 1360, 760);
+
         //Init Scene
         Window.changeScene(0);
     }
@@ -128,6 +134,7 @@ public class Window {
 
             DebugDraw.beginFrame();
 
+            this.frameBuffer.bind();
             glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
@@ -136,6 +143,7 @@ public class Window {
                 DebugDraw.draw();
                 currentScene.update(dt);
             }
+            this.frameBuffer.unbind();
             //
             this.imGuiLayer.update(dt, currentScene);
             glfwSwapBuffers(glfwWindow);
@@ -161,5 +169,13 @@ public class Window {
 
     public static void setHeight(int height){
         get().height = height;
+    }
+
+    public static FrameBuffer getFramebuffer(){
+        return get().frameBuffer;
+    }
+
+    public static float getTargetAspectRatio(){
+        return 16.0f / 9.0f;
     }
 }

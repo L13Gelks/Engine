@@ -10,8 +10,27 @@ import static org.lwjgl.stb.STBImage.*;
 
 public class Texture {
     private String filepath;
-    private int textureID;
+    private transient int textureID;
     private int textureWidth, textureHeight;
+
+    public Texture(){
+        textureID = -1;
+        this.textureWidth = -1;
+        this.textureHeight = -1;
+    }
+
+    public Texture(int width, int height){
+        this.filepath = "Generated";
+
+        //Generate textures on gpu
+        textureID = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
+                0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+
+    }
 
     public void init(String filepath){
         this.filepath = filepath;
@@ -61,6 +80,10 @@ public class Texture {
         return textureHeight;
     }
 
+    public String getFilepath(){
+        return  this.filepath;
+    }
+
     public void bind(){
         glBindTexture(GL_TEXTURE_2D, textureID);
     }
@@ -71,5 +94,14 @@ public class Texture {
 
     public int getID(){
         return textureID;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o == null) return false;
+        if(!(o instanceof Texture)) return false;
+        Texture t = (Texture)o;
+        return t.getTextureWidth() == this.textureWidth && t.getTextureHeight() == this.getTextureHeight()
+        && t.getID() == this.textureID && t.getFilepath() == this.filepath;
     }
 }
