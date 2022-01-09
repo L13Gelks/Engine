@@ -8,6 +8,9 @@ import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 public class MouseListener {
+    private static float currentResX = 1600;
+    private static float currentResY = 900;
+
     private static MouseListener instance;
     private double scrollX, scrollY;
     private double xPos, yPos, lastY, lastX;
@@ -127,6 +130,20 @@ public class MouseListener {
         camera.getInverseView().mul(camera.getInverseProjection(), viewProjection);
         tmp.mul(viewProjection);
         currentY = tmp.y;
+
+        return currentY;
+    }
+
+    public static float getScreenX(){
+        float currentX = getX() - get().gameViewportPos.x;
+        currentX = (currentX / get().gameViewportSize.x) * currentResX;
+
+        return currentX;
+    }
+
+    public static float getScreenY(){
+        float currentY = getY() - get().gameViewportPos.y;
+        currentY = currentResY - ((currentY / get().gameViewportSize.y) * currentResY);
 
         return currentY;
     }

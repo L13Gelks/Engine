@@ -2,11 +2,11 @@ package Engine;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
-import renderer.DebugDraw;
-import renderer.FrameBuffer;
+import renderer.*;
 import scenes.LevelEditorScene;
 import scenes.LevelScene;
 import scenes.Scene;
+import util.AssetPool;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -15,21 +15,24 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
+    private final int currentResX = 1600;
+    private final int currentResY = 900;
+
+
     private int width, height;
     private final String windowName;
     private long glfwWindow;
 
     private static Window window = null;
-
     private static Scene currentScene;
 
     private ImGuiLayer imGuiLayer;
-
     private FrameBuffer frameBuffer;
+    private PickingTexture pickingTexture;
     //private thus only one instance exists
     private Window(){
-        this.height = 760;
-        this.width = 1360;
+        this.height = currentResY;
+        this.width = currentResX;
         this.windowName = "Game";
     }
 
@@ -111,11 +114,13 @@ public class Window {
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        this.imGuiLayer = new ImGuiLayer(glfwWindow);
-        this.imGuiLayer.initImGui();
 
-        frameBuffer = new FrameBuffer(1360, 760);
-        glViewport(0,0, 1360, 760);
+        this.frameBuffer = new FrameBuffer(currentResX, currentResY);
+        this.pickingTexture = new PickingTexture(currentResX, currentResY);
+        glViewport(0,0, currentResX, currentResY);
+
+        this.imGuiLayer = new ImGuiLayer(glfwWindow, pickingTexture);
+        this.imGuiLayer.initImGui();
 
         //Init Scene
         Window.changeScene(0);
@@ -128,9 +133,25 @@ public class Window {
         float endTime = (float)glfwGetTime();
         float dt = -1.0f;
 
+        Shader defaultShader = AssetPool.getShader("assets/shaders/default.glsl");
+        Shader pickingShader = AssetPool.getShader("assets/shaders/pickingShader.glsl");
         while(!glfwWindowShouldClose(glfwWindow)){
             //Poll Events
             glfwPollEvents();
+
+            //Render pass1. Render to picking texture
+            glDisable(GL_BLEND);
+            pickingTexture.enableWriting();
+            glViewport(0,0 ,currentResX, currentResY);
+            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+            Renderer.bindShader(pickingShader);
+            currentScene.render();
+
+            pickingTexture.disableWriting();
+            glEnable(GL_BLEND);
+            //Render pass1. Render game
 
             DebugDraw.beginFrame();
 
@@ -141,7 +162,9 @@ public class Window {
             //
             if(dt >= 0){
                 DebugDraw.draw();
+                Renderer.bindShader(defaultShader);
                 currentScene.update(dt);
+                currentScene.render();
             }
             this.frameBuffer.unbind();
             //
