@@ -1,7 +1,9 @@
 package components;
 
 import Engine.GameObject;
+import editor.JImGui;
 import imgui.ImGui;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -40,22 +42,20 @@ public abstract class Component {
 
                 if(type == int.class){
                     int val = (int)value;
-                    int[] inInt = {val};
-                    if(ImGui.dragInt(name + ": ", inInt)){
-                        field.set(this,  inInt[0]);
-                    }
+                    field.set(this, JImGui.dragInt(name, val));
                 } else if(type == float.class){
                     float val = (float)value;
-                    float[] inFloat = {val};
-                    if(ImGui.dragFloat(name + ": ", inFloat)){
-                        field.set(this,  inFloat[0]);
-                    }
+                    field.set(this, JImGui.dragFloat(name, val));
                 } else if(type == boolean.class){
                     boolean val = (boolean)value;
                     if(ImGui.checkbox(name + ": ", val)){
                         field.set(this,  !val);
                     }
-                } else if(type == Vector3f.class){
+                } else if(type == Vector2f.class){
+                    Vector2f val = (Vector2f)value;
+                    JImGui.drawVec2Control(name, val);
+                }
+                else if(type == Vector3f.class){
                     Vector3f val = (Vector3f)value;
                     float[] imVec = {val.x, val.y, val.z};
                     if(ImGui.dragFloat3(name + ": ", imVec)){

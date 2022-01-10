@@ -3,6 +3,7 @@ package scenes;
 import Engine.Camera;
 import Engine.GameObject;
 import Engine.GameObjectDeserializer;
+import Engine.Transform;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import components.Component;
@@ -69,6 +70,13 @@ public abstract class Scene {
 
     }
 
+    public GameObject createGameObject(String name){
+        GameObject go = new GameObject(name);
+        go.addComponent(new Transform());
+        go.transform = go.getComponent(Transform.class);
+        return go;
+    }
+
     public void saveExit(){
         Gson gson = new GsonBuilder().
                 setPrettyPrinting().
@@ -77,7 +85,13 @@ public abstract class Scene {
                 create();
         try{
             FileWriter writer = new FileWriter("level.txt");
-            writer.write(gson.toJson(this.gameObjects));
+            List<GameObject> obSerialize = new ArrayList<>();
+            for(GameObject go : this.gameObjects){
+                if(go.doSerialization()){
+                    obSerialize.add(go);
+                }
+            }
+            writer.write(gson.toJson(obSerialize));
             writer.close();
         }catch(IOException e){
             e.printStackTrace();

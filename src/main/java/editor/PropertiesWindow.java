@@ -1,5 +1,6 @@
 package editor;
 
+import components.NonPickable;
 import imgui.ImGui;
 import Engine.GameObject;
 import Engine.MouseListener;
@@ -12,16 +13,28 @@ public class PropertiesWindow {
     private GameObject activeGameObject = null;
     private PickingTexture pickingTexture;
 
+    private float debounce = 0.2f;
+
     public PropertiesWindow(PickingTexture pickingTexture) {
         this.pickingTexture = pickingTexture;
     }
 
     public void update(float dt, Scene currentScene) {
-        if (MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
+        debounce -= dt;
+
+        if (MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT) && debounce < 0) {
             int x = (int)MouseListener.getScreenX();
             int y = (int)MouseListener.getScreenY();
             int gameObjectId = pickingTexture.readPixel(x, y);
-            activeGameObject = currentScene.getGameObject(gameObjectId);
+
+            GameObject pickedObject = currentScene.getGameObject(gameObjectId);
+            if(pickedObject != null && pickedObject.getComponent(NonPickable.class) == null){
+                activeGameObject = pickedObject;
+            }else if(pickedObject == null && !MouseListener.isDragging()){
+                activeGameObject = null;
+            }
+
+            debounce = 0.2f;
         }
     }
 
@@ -31,5 +44,9 @@ public class PropertiesWindow {
             activeGameObject.imgui();
             ImGui.end();
         }
+    }
+
+    public Engine.GameObject getActiveGameObject() {
+        return activeGameObject;
     }
 }

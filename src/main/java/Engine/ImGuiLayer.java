@@ -138,6 +138,7 @@ public class ImGuiLayer {
         glfwSetScrollCallback(glfwWindow, (w, xOffset, yOffset) -> {
             io.setMouseWheelH(io.getMouseWheelH() + (float) xOffset);
             io.setMouseWheel(io.getMouseWheel() + (float) yOffset);
+            MouseListener.mouseScrollCallback(w, xOffset, yOffset);
         });
 
         /*io.setSetClipboardTextFn(new ImStrConsumer() {
@@ -270,5 +271,9 @@ public class ImGuiLayer {
 
         //DockSpace
         ImGui.dockSpace(ImGui.getID("Dockspace"));
+    }
+
+    public PropertiesWindow getPropertiesWindow(){
+        return this.propertiesWindow;
     }
 }

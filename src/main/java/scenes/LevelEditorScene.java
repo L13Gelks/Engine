@@ -1,9 +1,6 @@
 package scenes;
 
-import Engine.Camera;
-import Engine.GameObject;
-import Engine.Prefabs;
-import Engine.Transform;
+import Engine.*;
 import components.*;
 import imgui.ImGui;
 import imgui.ImVec2;
@@ -18,7 +15,7 @@ public class LevelEditorScene extends Scene {
     SpriteSheet spriteSheet;
     private SpriteRenderer objSprite;
 
-    GameObject levelEditorStuff = new GameObject("LevelEditor", new Transform(), 0);
+    GameObject levelEditorStuff = this.createGameObject("LevelEditor");
 
     public LevelEditorScene(){
 
@@ -26,11 +23,15 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void init(){
+        loadResources();
+        spriteSheet = AssetPool.getSpriteSheet("assets/Sprites/Tiles/NaturalWorld.png");
+        SpriteSheet gizmos = AssetPool.getSpriteSheet("assets/Images/gizmos.png");
+
+        this.camera = new Camera(new Vector2f());
         levelEditorStuff.addComponent(new MouseControls());
         levelEditorStuff.addComponent(new GridLines());
-        loadResources();
-        this.camera = new Camera(new Vector2f());
-        spriteSheet = AssetPool.getSpriteSheet("assets/Sprites/Tiles/NaturalWorld.png");
+        levelEditorStuff.addComponent(new EditorCamera(this.camera));
+        levelEditorStuff.addComponent(new GizmoSystem(gizmos));
 
 //        ob = new GameObject("0", new Transform(new Vector2f(100,100), new Vector2f(256,256)), 1);
 //        objSprite = new SpriteRenderer();
@@ -39,6 +40,8 @@ public class LevelEditorScene extends Scene {
 //        ob.addComponent(new RigidBody());
 //        this.addGameObjectToScene(ob);
 //        this.activeGameObject = ob;
+
+        levelEditorStuff.start();
     }
 
     private void loadResources(){
@@ -47,7 +50,9 @@ public class LevelEditorScene extends Scene {
         AssetPool.addSpriteSheet("assets/Sprites/Tiles/NaturalWorld.png",
                 new SpriteSheet(AssetPool.getTexture("assets/Sprites/Tiles/NaturalWorld.png"),
                         128, 127, 18, 0));
-
+        AssetPool.addSpriteSheet("assets/Images/gizmos.png",
+                new SpriteSheet(AssetPool.getTexture("assets/Images/gizmos.png"),
+                        24, 48, 3, 0));
         for (GameObject go : gameObjects){
             if(go.getComponent(SpriteRenderer.class) != null){
                 SpriteRenderer spr = go.getComponent(SpriteRenderer.class);
@@ -61,6 +66,7 @@ public class LevelEditorScene extends Scene {
     @Override
     public void update(float dt){
         levelEditorStuff.update(dt);
+        this.camera.adjustProjection();
 
         for(GameObject go : this.gameObjects){
             go.update(dt);
@@ -73,6 +79,10 @@ public class LevelEditorScene extends Scene {
     }
     @Override
     public void imgui(){
+        ImGui.begin("Level Editr");
+        levelEditorStuff.imgui();
+        ImGui.end();
+
         ImGui.begin("Test Window");
 
         ImVec2 windowPos = new ImVec2();
