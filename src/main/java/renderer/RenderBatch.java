@@ -1,5 +1,6 @@
 package renderer;
 
+import Engine.GameObject;
 import Engine.Window;
 import components.Sprite;
 import components.SpriteRenderer;
@@ -153,6 +154,21 @@ public class RenderBatch implements Comparable<RenderBatch>{
             textures.get(i).unbind();
         }
         shader.detach();
+    }
+
+    public boolean destroyIfExists(GameObject go){
+        SpriteRenderer spriteRenderer = go.getComponent(SpriteRenderer.class);
+        for(int i = 0; i < numSprites; i++){
+            if(sprites[i] == spriteRenderer){
+                for (int j = 0; j < numSprites - 1; j++){
+                    sprites[j] = sprites[j+ 1];
+                    sprites[j].setDirty();
+                }
+                numSprites--;
+                return  true;
+            }
+        }
+        return  false;
     }
 
     private void loadVertexProperties(int index){

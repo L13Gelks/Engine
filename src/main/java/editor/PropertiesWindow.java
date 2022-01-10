@@ -4,6 +4,9 @@ import components.NonPickable;
 import imgui.ImGui;
 import Engine.GameObject;
 import Engine.MouseListener;
+import physics2d.components.Box2DCollider;
+import physics2d.components.CircleCollider;
+import physics2d.components.RigidBody2D;
 import renderer.PickingTexture;
 import scenes.Scene;
 
@@ -41,6 +44,31 @@ public class PropertiesWindow {
     public void imgui() {
         if (activeGameObject != null) {
             ImGui.begin("Properties");
+
+            if(ImGui.beginPopupContextWindow("ComponentAdder")){
+                if(ImGui.menuItem("Add RigidBody")){
+                    if(activeGameObject.getComponent(RigidBody2D.class) == null){
+                        activeGameObject.addComponent(new RigidBody2D());
+                    }
+                }
+
+                if(ImGui.menuItem("Add Box Collider")){
+                    if(activeGameObject.getComponent(Box2DCollider.class) == null &&
+                            activeGameObject.getComponent(CircleCollider.class) == null) {
+                        activeGameObject.addComponent(new Box2DCollider());
+                    }
+                }
+
+                if(ImGui.menuItem("Add Circle Collider")){
+                    if(activeGameObject.getComponent(CircleCollider.class) == null &&
+                            activeGameObject.getComponent(Box2DCollider.class) == null){
+                        activeGameObject.addComponent(new CircleCollider());
+                    }
+                }
+
+                ImGui.endPopup();
+            }
+
             activeGameObject.imgui();
             ImGui.end();
         }
@@ -48,5 +76,9 @@ public class PropertiesWindow {
 
     public Engine.GameObject getActiveGameObject() {
         return activeGameObject;
+    }
+
+    public void setActiveGameObject(GameObject gameObject){
+        this.activeGameObject = gameObject;
     }
 }
