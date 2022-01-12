@@ -62,7 +62,7 @@ public class Texture {
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width.get(0), height.get(0),
                         0, GL_RGBA, GL_UNSIGNED_BYTE, image);
             }else{
-                assert false: "Error (Texture) unkown number if channels: " + channels.get(0);
+                assert false: "Error (Texture) UNKNOWN number of channels: " + channels.get(0);
             }
 
         }else{

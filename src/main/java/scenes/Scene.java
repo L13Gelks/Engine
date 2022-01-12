@@ -26,6 +26,7 @@ public class Scene {
     private Camera camera;
     private boolean isRunning;
     private List<GameObject> gameObjects;
+    private List<GameObject> pendingGameObjects;
     private SceneInitializer sceneInitializer;
     private Physics2D physics2D;
 
@@ -34,6 +35,7 @@ public class Scene {
         this.physics2D = new Physics2D();
         this.renderer= new Renderer();
         this.gameObjects = new ArrayList<>();
+        this.pendingGameObjects = new ArrayList<>();
         this.isRunning = false;
     }
 
@@ -41,6 +43,9 @@ public class Scene {
         this.camera = new Camera(new Vector2f());
         this.sceneInitializer.loadResources(this);
         this.sceneInitializer.init(this);
+    }
+    public Physics2D getPhysics() {
+        return this.physics2D;
     }
 
     public void start(){
@@ -57,10 +62,7 @@ public class Scene {
         if(!isRunning){
             gameObjects.add(go);
         } else {
-            gameObjects.add(go);
-            go.start();
-            this.renderer.add(go);
-            this.physics2D.add(go);
+            pendingGameObjects.add(go);
         }
     }
 
@@ -77,6 +79,14 @@ public class Scene {
                 i--;
             }
         }
+
+        for(GameObject go : pendingGameObjects){
+            gameObjects.add(go);
+            go.start();
+            this.renderer.add(go);
+            this.physics2D.add(go);
+        }
+        pendingGameObjects.clear();
     }
 
     public void update(float dt){
@@ -103,6 +113,16 @@ public class Scene {
         for(GameObject go : gameObjects){
             go.destroy();
         }
+    }
+
+    public <T extends Component> GameObject getGameObjectWith(Class<T> clasz){
+        for(GameObject go : gameObjects){
+            if(go.getComponent(clasz) != null){
+                return go;
+            }
+        }
+
+        return  null;
     }
 
     public List<GameObject> getGameObjects(){
@@ -136,6 +156,7 @@ public class Scene {
                 setPrettyPrinting().
                 registerTypeAdapter(Component.class, new ComponentDeserializer()).
                 registerTypeAdapter(GameObject.class, new GameObjectDeserializer()).
+                enableComplexMapKeySerialization().
                 create();
         try{
             FileWriter writer = new FileWriter("level.txt");
@@ -157,6 +178,7 @@ public class Scene {
                 setPrettyPrinting().
                 registerTypeAdapter(Component.class, new ComponentDeserializer()).
                 registerTypeAdapter(GameObject.class, new GameObjectDeserializer()).
+                enableComplexMapKeySerialization().
                 create();
 
         String inFile = "";

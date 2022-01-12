@@ -28,6 +28,7 @@ public class RenderBatch implements Comparable<RenderBatch>{
     private final int TEXTURE_ID_SIZE = 1;
     private final int ENTITY_ID_SIZE = 1;
 
+
     private final int POS_OFFSET = 0;
     private final int COLOR_OFFSET = POS_OFFSET + POS_SIZE * Float.BYTES;
     private final int TEXTURE_COORDINATES_OFFSET = COLOR_OFFSET + COLOR_SIZE * Float.BYTES;
@@ -48,7 +49,10 @@ public class RenderBatch implements Comparable<RenderBatch>{
 
     private List<Texture> textures;
 
-    public RenderBatch(int maxBatchSize, int zIndex) {
+    Renderer renderer;
+
+    public RenderBatch(int maxBatchSize, int zIndex,  Renderer renderer) {
+        this.renderer = renderer;
         this.zIndex = zIndex;
         this.sprites = new SpriteRenderer[maxBatchSize];
         this.maxBatchSize = maxBatchSize;
@@ -119,9 +123,20 @@ public class RenderBatch implements Comparable<RenderBatch>{
         for(int i = 0; i < numSprites; i++){
             SpriteRenderer spr = sprites[i];
             if(spr.isDirty()){
-                loadVertexProperties(i);
-                spr.setClean();
-                rebufferData = true;
+                if(!hasTexture(spr.getTexture())){
+                    this.renderer.destroyGameObject(spr.gameObject);
+                    this.renderer.add(spr.gameObject);
+                } else {
+                    loadVertexProperties(i);
+                    spr.setClean();
+                    rebufferData = true;
+                }
+            }
+            //TODO
+            if(spr.gameObject.transform.zIndex != this.zIndex){
+                destroyIfExists(spr.gameObject);
+                renderer.add(spr.gameObject);
+                i--;
             }
         }
 
@@ -160,8 +175,8 @@ public class RenderBatch implements Comparable<RenderBatch>{
         SpriteRenderer spriteRenderer = go.getComponent(SpriteRenderer.class);
         for(int i = 0; i < numSprites; i++){
             if(sprites[i] == spriteRenderer){
-                for (int j = 0; j < numSprites - 1; j++){
-                    sprites[j] = sprites[j+ 1];
+                for (int j = i; j < numSprites - 1; j++){
+                    sprites[j] = sprites[j + 1];
                     sprites[j].setDirty();
                 }
                 numSprites--;
@@ -198,19 +213,19 @@ public class RenderBatch implements Comparable<RenderBatch>{
             transformMatrix.rotate((float)Math.toRadians(sprite.gameObject.transform.rotation),
                     0, 0, 1);
             transformMatrix.scale(sprite.gameObject.transform.scale.x,
-                    sprite.gameObject.transform.scale.y, 0);
+                    sprite.gameObject.transform.scale.y, 1);
         }
 
         //Add vertices with appropriate properties
-        float xAdd = 1.0f;
-        float yAdd = 1.0f;
+        float xAdd = 0.5f;
+        float yAdd = 0.5f;
         for (int i = 0; i < 4; i++){
             if(i == 1){
-                yAdd = 0.0f;
+                yAdd = -0.5f;
             }else if(i == 2){
-                xAdd = 0.0f;
+                xAdd = -0.5f;
             }else if(i == 3){
-                yAdd = 1.0f;
+                yAdd = 0.5f;
             }
 
             Vector4f currentPos = new Vector4f(sprite.gameObject.transform.position.x + (xAdd * sprite.gameObject.transform.scale.x),
@@ -261,9 +276,9 @@ public class RenderBatch implements Comparable<RenderBatch>{
 
         elements[offsetArrayIndex] = offset + 3;
         elements[offsetArrayIndex + 1] = offset + 2;
-        elements[offsetArrayIndex + 2] = offset + 0;
+        elements[offsetArrayIndex + 2] = offset;
 
-        elements[offsetArrayIndex + 3] = offset + 0;
+        elements[offsetArrayIndex + 3] = offset;
         elements[offsetArrayIndex + 4] = offset + 2;
         elements[offsetArrayIndex + 5] = offset + 1;
     }

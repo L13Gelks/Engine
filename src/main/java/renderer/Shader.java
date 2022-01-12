@@ -47,10 +47,10 @@ public class Shader {
             }else if(secondPattern.equals("fragment")){
                 fragmentSource = splitString[2];
             }else{
-                throw new IOException("Unexcpected token" + secondPattern);
+                throw new IOException("Unexpected token" + secondPattern);
             }
-            System.out.print(vertexSource);
-            System.out.print(fragmentSource);
+//            System.out.print(vertexSource);
+//            System.out.print(fragmentSource);
         }catch(IOException e){
             e.printStackTrace();
             assert false: "Error: Could not open shader file " + filepath;

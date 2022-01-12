@@ -1,14 +1,11 @@
 package components;
 
+import Engine.*;
 import editor.PropertiesWindow;
-import Engine.GameObject;
-import Engine.MouseListener;
-import Engine.Prefabs;
-import Engine.Window;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class Gizmo extends Component {
     private Vector4f xAxisColor = new Vector4f(1, 0, 0, 1);
@@ -22,11 +19,11 @@ public class Gizmo extends Component {
     private SpriteRenderer yAxisSprite;
     protected GameObject activeGameObject = null;
 
-    private Vector2f xAxisOffset = new Vector2f(64, -5);
-    private Vector2f yAxisOffset = new Vector2f(16, 61);
+    private Vector2f xAxisOffset = new Vector2f(24.0f / 80.0f, -6.0f / 80.0f);
+    private Vector2f yAxisOffset = new Vector2f(-7.0f / 80.0f, 21.0f / 80.0f);
 
-    private int gizmosWidth = 16;
-    private int gizmosHeight = 48;
+    private float gizmosWidth = 16.0f / 80.0f;
+    private float gizmosHeight = 48.0f / 80.0f;
 
     protected boolean xAxisActive = false;
     protected boolean yAxisActive = false;
@@ -36,8 +33,8 @@ public class Gizmo extends Component {
     private PropertiesWindow propertiesWindow;
 
     public Gizmo(Sprite arrowSprite, PropertiesWindow propertiesWindow) {
-        this.xAxisObject = Prefabs.generateSpriteObject(arrowSprite, 16, 48);
-        this.yAxisObject = Prefabs.generateSpriteObject(arrowSprite, 16, 48);
+        this.xAxisObject = Prefabs.generateSpriteObject(arrowSprite, gizmosWidth, gizmosHeight);
+        this.yAxisObject = Prefabs.generateSpriteObject(arrowSprite, gizmosWidth, gizmosHeight);
         this.xAxisSprite = this.xAxisObject.getComponent(SpriteRenderer.class);
         this.yAxisSprite = this.yAxisObject.getComponent(SpriteRenderer.class);
         this.propertiesWindow = propertiesWindow;
@@ -64,6 +61,8 @@ public class Gizmo extends Component {
         if(using){
             this.setInactive();
         }
+        xAxisObject.getComponent(SpriteRenderer.class).setColor(new Vector4f(0,0,0,0));
+        yAxisObject.getComponent(SpriteRenderer.class).setColor(new Vector4f(0,0,0,0));
     }
     @Override
     public void editorUpdate(float dt) {
@@ -111,11 +110,11 @@ public class Gizmo extends Component {
     }
 
     private boolean checkXHoverState(){
-        Vector2f mousePos = new Vector2f(MouseListener.getOrthoX(), MouseListener.getOrthoY());
-        if(mousePos.x <= xAxisObject.transform.position.x &&
-                mousePos.x >= xAxisObject.transform.position.x - gizmosHeight &&
-                mousePos.y >= xAxisObject.transform.position.y &&
-                mousePos.y <= xAxisObject.transform.position.y + gizmosWidth){
+        Vector2f mousePos = MouseListener.getWorld();
+        if(mousePos.x <= xAxisObject.transform.position.x + (gizmosHeight / 2.0f) &&
+                mousePos.x >= xAxisObject.transform.position.x - (gizmosWidth * 1.5) &&
+                mousePos.y >= xAxisObject.transform.position.y - (gizmosWidth / 2.0f) &&
+                mousePos.y <= xAxisObject.transform.position.y + (gizmosWidth / 2.0f)){
             xAxisSprite.setColor(xAxisColorHover);
             return true;
         }
@@ -124,11 +123,11 @@ public class Gizmo extends Component {
     }
 
     private boolean checkYHoverState(){
-        Vector2f mousePos = new Vector2f(MouseListener.getOrthoX(), MouseListener.getOrthoY());
-        if(mousePos.x <= yAxisObject.transform.position.x &&
-                mousePos.x >= yAxisObject.transform.position.x - gizmosWidth &&
-                mousePos.y <= yAxisObject.transform.position.y &&
-                mousePos.y >= yAxisObject.transform.position.y - gizmosHeight){
+        Vector2f mousePos = MouseListener.getWorld();
+        if(mousePos.x <= yAxisObject.transform.position.x + (gizmosWidth / 2.0f) &&
+                mousePos.x >= yAxisObject.transform.position.x - (gizmosWidth / 2.0f)  &&
+                mousePos.y <= yAxisObject.transform.position.y + (gizmosHeight / 2.0f) &&
+                mousePos.y >= yAxisObject.transform.position.y - (gizmosHeight / 2.0f)){
             yAxisSprite.setColor(yAxisColorHover);
             return true;
         }

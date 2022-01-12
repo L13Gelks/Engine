@@ -4,10 +4,13 @@ import observers.EventSystem;
 import observers.Observer;
 import observers.events.Event;
 import observers.events.EventType;
+import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import physics2d.Physics2D;
 import renderer.*;
 import scenes.LevelEditorSceneInitializer;
+import scenes.LevelSceneInitializer;
 import scenes.Scene;
 import scenes.SceneInitializer;
 import util.AssetPool;
@@ -17,11 +20,11 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
+import static org.lwjgl.system.windows.User32.*;
 
 public class Window implements Observer {
     private final int currentResX = 1600;
     private final int currentResY = 900;
-
 
     private int width, height;
     private final String windowName;
@@ -96,6 +99,12 @@ public class Window implements Observer {
         if(glfwWindow == NULL){
             throw new IllegalStateException("Failed to create GLFW WINDOW");
         }
+
+        //Center widnow
+        int max_width  = GetSystemMetrics(SM_CXSCREEN);
+        int max_hieght = GetSystemMetrics(SM_CYSCREEN);
+        glfwSetWindowMonitor(glfwWindow, NULL, (max_width/2)-(width/2), (max_hieght/2) - (height/2), width, height, GLFW_DONT_CARE);
+
         //Set callback
         glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePositionCallback);
         glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
@@ -128,6 +137,7 @@ public class Window implements Observer {
         Window.changeScene(new LevelEditorSceneInitializer());
     }
 
+    public static Physics2D getPhysics() { return currentScene.getPhysics(); }
 
     public void loop(){
         //Init timers
@@ -145,7 +155,7 @@ public class Window implements Observer {
             glDisable(GL_BLEND);
             pickingTexture.enableWriting();
             glViewport(0,0 ,currentResX, currentResY);
-            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            glClearColor(0,0,0,0);
             glClear(GL_COLOR_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
             Renderer.bindShader(pickingShader);
@@ -158,12 +168,12 @@ public class Window implements Observer {
             DebugDraw.beginFrame();
 
             this.frameBuffer.bind();
-            glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+            Vector4f clearColor = currentScene.camera().clearColor;
+            glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
             glClear(GL_COLOR_BUFFER_BIT);
 
             //
             if(dt >= 0){
-                DebugDraw.draw();
                 Renderer.bindShader(defaultShader);
                 if(runtimePlaying){
                     currentScene.update(dt);
@@ -172,12 +182,14 @@ public class Window implements Observer {
                 }
 
                 currentScene.render();
+                DebugDraw.draw();
             }
             this.frameBuffer.unbind();
             //
             this.imGuiLayer.update(dt, currentScene);
-            glfwSwapBuffers(glfwWindow);
+            KeyboardListener.endFrame();
             MouseListener.endFrame();
+            glfwSwapBuffers(glfwWindow);
 
             //Calculate delta time
             endTime = (float)glfwGetTime();
@@ -219,7 +231,7 @@ public class Window implements Observer {
             case GameEngineStartPlay:
                 this.runtimePlaying = true;
                 currentScene.save();
-                Window.changeScene(new LevelEditorSceneInitializer());
+                Window.changeScene(new LevelSceneInitializer());
                 break;
             case GameEngineStopPlay:
                 this.runtimePlaying = false;

@@ -1,7 +1,12 @@
 package Engine;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import components.Component;
+import components.ComponentDeserializer;
+import components.SpriteRenderer;
 import imgui.ImGui;
+import util.AssetPool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +15,7 @@ public class GameObject {
     private static int ID_COUNTER = 0;
     private int uid = -1;
 
-    private String name;
+    public String name;
     private List<Component> components;
     public transient Transform transform;
     private boolean doSerialization = true;
@@ -88,6 +93,29 @@ public class GameObject {
         }
     }
 
+    public GameObject copy(){
+        //TODO
+        Gson gson = new GsonBuilder().
+                setPrettyPrinting().
+                registerTypeAdapter(Component.class, new ComponentDeserializer()).
+                registerTypeAdapter(GameObject.class, new GameObjectDeserializer()).
+                enableComplexMapKeySerialization().
+                create();
+        String objAsJson = gson.toJson(this);
+        GameObject obj = gson.fromJson(objAsJson, GameObject.class);
+        obj.generateId();
+        for (Component c : obj.getAllComponents()){
+            c.getUid();
+        }
+
+        SpriteRenderer spriteRenderer = obj.getComponent(SpriteRenderer.class);
+        if(spriteRenderer != null && spriteRenderer.getTexture() != null){
+            spriteRenderer.setTexture(AssetPool.getTexture(spriteRenderer.getTexture().getFilepath()));
+        }
+
+        return obj;
+    }
+
     public boolean isDead(){
         return  this.isDead;
     }
@@ -110,5 +138,9 @@ public class GameObject {
 
     public boolean doSerialization(){
         return this.doSerialization;
+    }
+
+    public void generateId(){
+        this.uid = ID_COUNTER++;
     }
 }
