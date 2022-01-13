@@ -10,6 +10,7 @@ import org.joml.Vector2i;
 import org.joml.Vector4f;
 import renderer.DebugDraw;
 import renderer.PickingTexture;
+import scenes.LevelEditorSceneInitializer;
 import scenes.Scene;
 import util.Settings;
 
@@ -46,6 +47,10 @@ public class MouseControls extends Component{
         newObj.getComponent(SpriteRenderer.class).setColor(new Vector4f(1, 1, 1, 1));
         newObj.removeComponent(NonPickable.class);
         Window.getScene().addGameObjectToScene(newObj);
+        if(newObj.getComponent(PlayerController.class) != null && LevelEditorSceneInitializer.isPlayerGenerated) {
+            holdingObject.destroy();
+            holdingObject = null;
+        }
     }
     @Override
     public void  editorUpdate(float dt){

@@ -37,7 +37,7 @@ public class Prefabs {
         AnimationState run = new AnimationState();
         run.title = "Run";
         for (int i = 0; i < 20; i++){
-            run.addFrame(sprite.getSprite(i), defaultFrameTime);
+            run.addFrame(sprite.getSprite(i), (defaultFrameTime / 3.0f));
         }
         run.setLoop(true);
         ////////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ public class Prefabs {
         ////////////////////////////////////////////////////////////////////////
         PillboxCollider pb = new PillboxCollider();
         pb.width = 0.21f;
-        pb.height = 0.25f;
+        pb.height = 0.32f;
         player.addComponent(pb);
 
         RigidBody2D rb = new RigidBody2D();

@@ -16,6 +16,7 @@ import util.AssetPool;
 public class LevelEditorSceneInitializer extends SceneInitializer {
     SpriteSheet spriteSheet;
     private GameObject levelEditorStuff;
+    public static transient boolean isPlayerGenerated = false;
 
     public LevelEditorSceneInitializer(){
 
@@ -173,20 +174,24 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
             }
             if(ImGui.beginTabItem("Prefabs")){
                 int uid = 0;
-                SpriteSheet playerSprites = AssetPool.getSpriteSheet("assets/Sprites/Characters/waifuRun.png");
-                Sprite sprite = playerSprites.getSprite(0);
-                float spriteWidth = 32;
-                float spriteHeight = 32;
-                int id = sprite.getTextureID();
-                Vector2f[] textureCoordinates = sprite.getTextureCoordinates();
+                if(!isPlayerGenerated){
+                    SpriteSheet playerSprites = AssetPool.getSpriteSheet("assets/Sprites/Characters/waifuRun.png");
+                    Sprite sprite = playerSprites.getSprite(0);
+                    float spriteWidth = 32;
+                    float spriteHeight = 32;
+                    int id = sprite.getTextureID();
+                    Vector2f[] textureCoordinates = sprite.getTextureCoordinates();
 
-                ImGui.pushID(uid++);
-                if (ImGui.imageButton(id, spriteWidth, spriteHeight, textureCoordinates[2].x, textureCoordinates[0].y, textureCoordinates[0].x, textureCoordinates[2].y)) {
-                    GameObject object = Prefabs.generatePlayer();
-                    //Attach this to mouse cursor
-                    levelEditorStuff.getComponent(MouseControls.class).pickupObject(object);
+                    ImGui.pushID(uid++);
+                    if (ImGui.imageButton(id, spriteWidth, spriteHeight, textureCoordinates[2].x, textureCoordinates[0].y, textureCoordinates[0].x, textureCoordinates[2].y)) {
+                        GameObject object = Prefabs.generatePlayer();
+                        //Attach this to mouse cursor
+                        levelEditorStuff.getComponent(MouseControls.class).pickupObject(object);
+                        isPlayerGenerated = true;
+                    }
+                    ImGui.popID();
                 }
-                ImGui.popID();
+
                 ImGui.sameLine();
                 ImGui.endTabItem();
             }

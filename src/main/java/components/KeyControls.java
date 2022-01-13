@@ -4,6 +4,7 @@ import Engine.GameObject;
 import Engine.KeyboardListener;
 import Engine.Window;
 import editor.PropertiesWindow;
+import scenes.LevelEditorSceneInitializer;
 import util.Settings;
 
 import java.awt.event.KeyListener;
@@ -50,6 +51,9 @@ public class KeyControls extends  Component{
             }
         } else if (KeyboardListener.keyBeginPress(GLFW_KEY_DELETE)){
             for (GameObject go : activeGameObjects) {
+                if(go.getComponent(PlayerController.class) != null){
+                    LevelEditorSceneInitializer.isPlayerGenerated = false;
+                }
                 go.destroy();
             }
             propertiesWindow.clearSelected();

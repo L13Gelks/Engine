@@ -21,8 +21,6 @@ public class LevelSceneInitializer extends SceneInitializer {
     public void loadResources(Scene scene) {
         AssetPool.getShader("assets/shaders/default.glsl");
 
-
-
  //       AssetPool.addSound("assets/sounds/main-theme-overworld.ogg", true);
 
         for (GameObject g : scene.getGameObjects()) {
