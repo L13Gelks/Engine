@@ -3,11 +3,11 @@ package components;
 import Engine.GameObject;
 import Engine.KeyboardListener;
 import Engine.Window;
+import Game.entity.Player;
 import editor.PropertiesWindow;
 import scenes.LevelEditorSceneInitializer;
 import util.Settings;
 
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class KeyControls extends  Component{
         GameObject activeGameObject = propertiesWindow.getActiveGameObject();
         List<GameObject> activeGameObjects = propertiesWindow.getActiveGameObjects();
 
-        float multiplier = KeyboardListener.isKeyPressed(GLFW_KEY_LEFT_SHIFT) ? 0.1f : 1.0f;
+        float multiplier = KeyboardListener.isKeyPressed(GLFW_KEY_LEFT_SHIFT) ? 0.05f : 1.0f;
 
         debounce -= dt;
 
@@ -51,7 +51,7 @@ public class KeyControls extends  Component{
             }
         } else if (KeyboardListener.keyBeginPress(GLFW_KEY_DELETE)){
             for (GameObject go : activeGameObjects) {
-                if(go.getComponent(PlayerController.class) != null){
+                if(go.getComponent(Player.class) != null){
                     LevelEditorSceneInitializer.isPlayerGenerated = false;
                 }
                 go.destroy();
@@ -64,13 +64,19 @@ public class KeyControls extends  Component{
             }
         } else if (KeyboardListener.keyBeginPress(GLFW_KEY_UP) && debounce < 0) {
             debounce = debounceTime;
+            //Gradually increase USEFUL FOR MOUNTAINS, STEPS etc
+            float defaultMultiplier = KeyboardListener.isKeyPressed(GLFW_KEY_LEFT_CONTROL) ? multiplier : 0.0f;
             for (GameObject go : activeGameObjects) {
                 go.transform.position.y += Settings.GRID_HEIGHT * multiplier;
+                multiplier += defaultMultiplier;
             }
         } else if (KeyboardListener.keyBeginPress(GLFW_KEY_DOWN) && debounce < 0){
             debounce = debounceTime;
+            //Gradually decrease USEFUL FOR MOUNTAINS, STEPS etc
+            float defaultMultiplier = KeyboardListener.isKeyPressed(GLFW_KEY_LEFT_CONTROL) ? multiplier : 0.0f;
             for(GameObject go : activeGameObjects){
                 go.transform.position.y -= Settings.GRID_HEIGHT * multiplier;
+                multiplier += defaultMultiplier;
             }
         } else if (KeyboardListener.keyBeginPress(GLFW_KEY_LEFT) && debounce < 0){
             debounce = debounceTime;

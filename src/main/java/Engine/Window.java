@@ -6,6 +6,7 @@ import observers.events.Event;
 import observers.events.EventType;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.opengl.GL;
 import physics2d.Physics2D;
 import renderer.*;
@@ -19,6 +20,8 @@ import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.stb.STBImage.stbi_image_free;
+import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.system.windows.User32.*;
 
@@ -99,6 +102,7 @@ public class Window implements Observer {
         if(glfwWindow == NULL){
             throw new IllegalStateException("Failed to create GLFW WINDOW");
         }
+
 
         //Center widnow
         int max_width  = GetSystemMetrics(SM_CXSCREEN);

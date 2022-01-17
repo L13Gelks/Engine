@@ -196,7 +196,6 @@ public class Physics2D {
         for (int i = 0; i < size; i++) {
             body.destroyFixture(body.getFixtureList());
         }
-
         addCircleCollider(rb, circleCollider);
         body.resetMassData();
     }

@@ -1,6 +1,8 @@
 package components;
 
 import Engine.GameObject;
+import Game.entity.Entity;
+import Game.entity.Player;
 import editor.JImGui;
 import imgui.ImGui;
 import imgui.type.ImInt;
@@ -11,6 +13,9 @@ import org.joml.Vector4f;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class Component {
     private static int ID_COUNTER = 0;
@@ -49,7 +54,19 @@ public abstract class Component {
 
     public void imgui(){
         try{
-            Field[] fields = this.getClass().getDeclaredFields();
+            Field[] fields = null;
+            if(this.getClass() != Game.entity.Player.class){
+                fields = this.getClass().getDeclaredFields();
+            }else{
+                Field[] firstArray = this.getClass().getDeclaredFields();
+                Field[] secondArray = this.getClass().getSuperclass().getDeclaredFields();
+                int fal = firstArray.length;        //determines length of firstArray
+                int sal = secondArray.length;   //determines length of secondArray
+                fields = new Field[fal + sal];  //resultant array of size first array and second array
+                System.arraycopy(firstArray, 0, fields, 0, fal);
+                System.arraycopy(secondArray, 0, fields, fal, sal);
+            }
+
             for(Field field : fields){
                 boolean isPrivate = Modifier.isPrivate(field.getModifiers());
                 boolean isTransient = Modifier.isTransient(field.getModifiers());

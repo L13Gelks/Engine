@@ -1,6 +1,8 @@
 package scenes;
 
 import Engine.GameObject;
+import Game.UI;
+import Game.entity.Player;
 import components.*;
 import util.AssetPool;
 
@@ -13,6 +15,14 @@ public class LevelSceneInitializer extends SceneInitializer {
     public void init(Scene scene) {
         GameObject cameraObject = scene.createGameObject("GameCamera");
         cameraObject.addComponent(new GameCamera(scene.camera()));
+        for (GameObject g : scene.getGameObjects()) {
+            if (g.getComponent(Player.class) != null) {
+                cameraObject.addComponent(new UI(g.getComponent(Player.class)));
+            }else{
+                //TODO: ASSERTION
+            }
+        }
+
         cameraObject.start();
         scene.addGameObjectToScene(cameraObject);
     }

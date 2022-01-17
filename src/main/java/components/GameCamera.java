@@ -4,6 +4,7 @@ import Engine.Camera;
 import Engine.GameObject;
 import Engine.MouseListener;
 import Engine.Window;
+import Game.entity.Player;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -30,7 +31,7 @@ public class GameCamera extends  Component{
 
     @Override
     public void start() {
-        this.player = Window.getScene().getGameObjectWith(PlayerController.class);
+        this.player = Window.getScene().getGameObjectWith(Player.class);
         this.gameCamera.clearColor.set(skyColor);
         this.undergroundYLevel = this.gameCamera.position.y -
                 this.gameCamera.getProjectionSize().y - this.cameraBuffer;
@@ -38,7 +39,7 @@ public class GameCamera extends  Component{
 
     @Override
     public void update(float dt) {
-        if (player != null && !player.getComponent(PlayerController.class).hasWon()) {
+        if (player != null && !player.getComponent(Player.class).hasWon()) {
             gameCamera.position.x = player.transform.position.x - (3 * gameCamera.getZoom());
             gameCamera.position.y = player.transform.position.y - (1 * gameCamera.getZoom());
 //            if (player.transform.position.y < -playerBuffer) {

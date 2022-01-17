@@ -84,6 +84,7 @@ public class StateMachine extends  Component{
                     int newStateIndex = stateIndexOf(stateTransfers.get(state));
                     if (newStateIndex > -1) {
                         currentState = states.get(newStateIndex);
+                        currentState.isActive = true;
                     }
                 }
                 return;

@@ -98,7 +98,7 @@ public class PropertiesWindow {
         SpriteRenderer spr = gameObject.getComponent(SpriteRenderer.class);
         if(spr != null){
             this.activeGameObjectOriginalColor.add(new Vector4f(spr.getColor()));
-            spr.setColor(new Vector4f(0.8f, 0.8f, 0.0f, 0.8f));
+            spr.setColor(new Vector4f(0.5f, 0.5f, 0.5f, 0.95f));
         } else {
             this.activeGameObjectOriginalColor.add(new Vector4f());
         }

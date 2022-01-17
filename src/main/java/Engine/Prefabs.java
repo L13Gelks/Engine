@@ -1,7 +1,7 @@
 package Engine;
 
+import Game.entity.Player;
 import components.*;
-import org.joml.Vector2f;
 import physics2d.components.PillboxCollider;
 import physics2d.components.RigidBody2D;
 import physics2d.enums.BodyType;
@@ -40,15 +40,40 @@ public class Prefabs {
             run.addFrame(sprite.getSprite(i), (defaultFrameTime / 3.0f));
         }
         run.setLoop(true);
+        //jumpUp
+        sprite = AssetPool.getSpriteSheet("assets/Sprites/Characters/waifuJump.png");
+        AnimationState jumpUp = new AnimationState();
+        jumpUp.title = "JumpUp";
+        for (int i = 0; i < 10; i++){
+            jumpUp.addFrame(sprite.getSprite(i), (defaultFrameTime / 2.0f));
+        }
+        jumpUp.setLoop(false);
+        //jumpDown
+        AnimationState jumpDown = new AnimationState();
+        jumpDown.title = "jumpDown";
+        for (int i = 11; i < 26; i++){
+            jumpDown.addFrame(sprite.getSprite(i), (defaultFrameTime / 2.0f));
+        }
+        jumpDown.setLoop(false);
         ////////////////////////////////////////////////////////////////////////
         //States
         ////////////////////////////////////////////////////////////////////////
         StateMachine stateMachine = new StateMachine();
         stateMachine.addState(idle);
         stateMachine.addState(run);
+        stateMachine.addState(jumpUp);
+        stateMachine.addState(jumpDown);
+
         stateMachine.setDefaultState(idle.title);
         stateMachine.addState(idle.title, run.title, "startRunning");
         stateMachine.addState(run.title, idle.title, "stopRunning");
+        stateMachine.addState(run.title, jumpUp.title, "jumpUp");
+        stateMachine.addState(idle.title, jumpUp.title, "jumpUp");
+        stateMachine.addState(jumpUp.title, jumpDown.title, "jumpDown");
+        stateMachine.addState(idle.title, jumpDown.title, "jumpDown");
+        stateMachine.addState(run.title, jumpDown.title, "jumpDown");
+        //stateMachine.addState(jumpDown.title, stopJumping.title, "stopJumping");
+        stateMachine.addState(jumpDown.title, idle.title, "stopJumping");
         player.addComponent(stateMachine);
         ////////////////////////////////////////////////////////////////////////
         //Physics
@@ -65,7 +90,7 @@ public class Prefabs {
         rb.setMass(25.0f);
         player.addComponent(rb);
 
-        player.addComponent(new PlayerController());
+        player.addComponent(new Player());
 
         player.transform.zIndex = 10;
 

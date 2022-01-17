@@ -48,6 +48,10 @@ public class DebugDraw {
         glLineWidth(2.0f);
     }
 
+    public static void lineWidth(float size){
+        glLineWidth(size);
+    }
+
     public static void beginFrame(){
         if(!started){
             start();
@@ -107,6 +111,13 @@ public class DebugDraw {
 
         //unbind shader
         shader.detach();
+    }
+
+    public static void reset(){
+        for(int i = 0; i < lines.size(); i++){
+            lines.remove(i);
+            i--;
+        }
     }
     //=============================================
     // Add line2d methods

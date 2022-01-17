@@ -13,6 +13,7 @@ public class AnimationState {
     private transient float timeTracker = 0.0f;
     private transient  int currentSprite = 0;
     public boolean doesLoop = false;
+    public boolean isActive = false;
 
     public void refreshTextures(){
         for (Frame frame : animationFrames) {
@@ -29,13 +30,15 @@ public class AnimationState {
     }
 
     public void update(float dt){
-        if(currentSprite < animationFrames.size()){
-            timeTracker -= dt;
-            if(timeTracker <= dt){
-                if(!(currentSprite == animationFrames.size() - 1 && !doesLoop)){
-                    currentSprite = (currentSprite + 1) % animationFrames.size();
+        if(isActive){
+            if(currentSprite < animationFrames.size()){
+                timeTracker -= dt;
+                if(timeTracker <= dt){
+                    if(!(currentSprite == animationFrames.size() - 1 && !doesLoop)){
+                        currentSprite = (currentSprite + 1) % animationFrames.size();
+                    }
+                    timeTracker = animationFrames.get(currentSprite).frameTime;
                 }
-                timeTracker = animationFrames.get(currentSprite).frameTime;
             }
         }
     }

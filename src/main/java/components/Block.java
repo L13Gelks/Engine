@@ -1,9 +1,9 @@
 package components;
 
 import Engine.GameObject;
+import Game.entity.Player;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.joml.Vector2f;
-import util.AssetPool;
 
 public abstract  class Block extends  Component{
     private transient boolean bopGoingUp = true;
@@ -43,15 +43,15 @@ public abstract  class Block extends  Component{
 
     @Override
     public void beginCollision(GameObject obj, Contact contact, Vector2f contactNormal) {
-        PlayerController playerController = obj.getComponent(PlayerController.class);
-        if (active && playerController != null && contactNormal.y < -0.8f) {
+        Player player = obj.getComponent(Player.class);
+        if (active && player != null && contactNormal.y < -0.8f) {
             doBopAnimation = true;
             //AssetPool.getSound("assets/sounds/bump.ogg").play();
-            playerHit(playerController);
+            playerHit(player);
         }
     }
 
     public void setInactive() { this.active = false; }
 
-    abstract void playerHit(PlayerController playerController);
+    abstract void playerHit(Player player);
 }

@@ -8,8 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import components.Component;
 import components.ComponentDeserializer;
-import components.PlayerController;
-import imgui.ImGui;
+import Game.entity.Player;
 import org.joml.Vector2f;
 import physics2d.Physics2D;
 import renderer.Renderer;
@@ -196,7 +195,7 @@ public class Scene {
             GameObject[] objects = gson.fromJson(inFile, GameObject[].class);
             for(int i = 0; i < objects.length; i++){
                 addGameObjectToScene(objects[i]);
-                if(objects[i].getComponent(PlayerController.class) != null){
+                if(objects[i].getComponent(Player.class) != null){
                     LevelEditorSceneInitializer.isPlayerGenerated = true;
                 }
                 for(Component c : objects[i].getAllComponents()){

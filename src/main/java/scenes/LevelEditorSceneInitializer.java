@@ -1,16 +1,15 @@
 package scenes;
 
 import Engine.*;
+import Game.UI;
 import components.*;
 import imgui.ImGui;
 import imgui.ImVec2;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+
 import physics2d.components.Box2DCollider;
 import physics2d.components.RigidBody2D;
 import physics2d.enums.BodyType;
-import renderer.DebugDraw;
 import util.AssetPool;
 
 public class LevelEditorSceneInitializer extends SceneInitializer {
@@ -56,6 +55,9 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
         AssetPool.addSpriteSheet("assets/Sprites/Characters/waifuRun.png",
                 new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/waifuRun.png"),
                         416, 454, 20, 0));
+        AssetPool.addSpriteSheet("assets/Sprites/Characters/waifuJump.png",
+                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/waifuJump.png"),
+                        416, 454, 30, 0));
 
 
         for (GameObject go : scene.getGameObjects()){
