@@ -3,10 +3,8 @@ package Engine;
 import observers.EventSystem;
 import observers.Observer;
 import observers.events.Event;
-import observers.events.EventType;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.opengl.GL;
 import physics2d.Physics2D;
 import renderer.*;
@@ -64,7 +62,6 @@ public class Window implements Observer {
     public static Window get(){
         if(Window.window == null){
             Window.window = new Window();
-
         }
         return Window.window;
     }
@@ -168,7 +165,6 @@ public class Window implements Observer {
             pickingTexture.disableWriting();
             glEnable(GL_BLEND);
             //Render pass1. Render game
-
             DebugDraw.beginFrame();
 
             this.frameBuffer.bind();
@@ -190,7 +186,12 @@ public class Window implements Observer {
             }
             this.frameBuffer.unbind();
             //
-            this.imGuiLayer.update(dt, currentScene);
+            if(runtimePlaying){
+                this.imGuiLayer.update(dt, currentScene);
+            }else{
+                this.imGuiLayer.editorUpdate(dt, currentScene);
+            }
+
             KeyboardListener.endFrame();
             MouseListener.endFrame();
             glfwSwapBuffers(glfwWindow);
@@ -201,6 +202,7 @@ public class Window implements Observer {
             beginTime = endTime;
         }
     }
+
     public static int getWidth(){
         return get().width;
     }

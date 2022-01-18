@@ -7,6 +7,7 @@ import components.*;
 import util.AssetPool;
 
 public class LevelSceneInitializer extends SceneInitializer {
+
     public LevelSceneInitializer() {
 
     }
@@ -18,6 +19,7 @@ public class LevelSceneInitializer extends SceneInitializer {
         for (GameObject g : scene.getGameObjects()) {
             if (g.getComponent(Player.class) != null) {
                 cameraObject.addComponent(new UI(g.getComponent(Player.class)));
+                player = g.getComponent(Player.class);
             }else{
                 //TODO: ASSERTION
             }

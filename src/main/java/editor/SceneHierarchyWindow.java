@@ -52,7 +52,6 @@ public class SceneHierarchyWindow {
             if(payLoadObj != null){
                 if(payLoadObj.getClass().isAssignableFrom(GameObject.class)){
                     GameObject gameObject = (GameObject) payLoadObj;
-                    System.out.println("Pauload: " + gameObject.name);
                 }
             }
             ImGui.endDragDropTarget();

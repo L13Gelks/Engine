@@ -10,6 +10,7 @@ import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 import imgui.type.ImBoolean;
 import renderer.PickingTexture;
+import scenes.LevelSceneInitializer;
 import scenes.Scene;
 
 import java.awt.event.KeyListener;
@@ -30,6 +31,7 @@ public class ImGuiLayer {
     private PropertiesWindow propertiesWindow;
     private MenuBar menuBar;
     private SceneHierarchyWindow sceneHierarchyWindow;
+    private StatsTestWindow statsTestWindow;
 
     public ImGuiLayer(long glfwWindow, PickingTexture pickingTexture) {
         this.glfwWindow = glfwWindow;
@@ -37,6 +39,8 @@ public class ImGuiLayer {
         this.propertiesWindow = new PropertiesWindow(pickingTexture);
         this.menuBar = new MenuBar();
         this.sceneHierarchyWindow = new SceneHierarchyWindow();
+        this.statsTestWindow = new StatsTestWindow();
+        //this.StatsTestWindow = new StatsTestWindow();
     }
 
     public GameViewWindow getGameViewWindow(){
@@ -180,7 +184,7 @@ public class ImGuiLayer {
         imGuiGl3.init("#version 330 core");
     }
 
-    public void update(float dt, Scene currentScene) {
+    public void editorUpdate(float dt, Scene currentScene){
         startFrame(dt);
 
         // Any Dear ImGui code SHOULD go between ImGui.newFrame()/ImGui.render() methods
@@ -190,6 +194,20 @@ public class ImGuiLayer {
         gameViewWindow.imgui();
         propertiesWindow.imgui();
         sceneHierarchyWindow.imgui();
+
+        endFrame();
+    }
+
+    public void update(float dt, Scene currentScene) {
+        startFrame(dt);
+
+        // Any Dear ImGui code SHOULD go between ImGui.newFrame()/ImGui.render() methods
+        setupDockSpace();
+        currentScene.imgui();
+        //ImGui.showDemoWindow();
+        gameViewWindow.imgui();
+        statsTestWindow.setPlayer(currentScene.getSceneInitializer().getPlayer());
+        statsTestWindow.imgui();
 
         endFrame();
     }
