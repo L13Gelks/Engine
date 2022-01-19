@@ -14,8 +14,6 @@ public class Entity extends Component {
     private int intelligence;
     private int resistance;
 
-
-
     private float healthPoints;
     private float staminaPoints;
     private float manaPoints;
@@ -55,6 +53,10 @@ public class Entity extends Component {
     private transient float bleedingResistance;
     private transient float poisonResistance;
     private transient float stunResistance;
+
+    public void receiveDamage(float damage){
+        this.setHealthPoints(this.getHealthPoints() - damage);
+    }
 
     public boolean isDead() {
         return isDead;

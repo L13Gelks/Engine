@@ -1,7 +1,11 @@
 package Engine;
 
 import Game.entity.Player;
+import Game.entity.SlashAttack;
+import Game.entity.TestDummy;
 import components.*;
+import org.joml.Vector2f;
+import physics2d.components.Box2DCollider;
 import physics2d.components.PillboxCollider;
 import physics2d.components.RigidBody2D;
 import physics2d.enums.BodyType;
@@ -96,5 +100,65 @@ public class Prefabs {
 
 
         return player;
+    }
+
+    public static GameObject testDummy(){
+        ////////////////////////////////////////////////////////////////////////
+        //Textures
+        ////////////////////////////////////////////////////////////////////////
+        SpriteSheet sprite = AssetPool.getSpriteSheet("assets/images/testDummy.png");
+        GameObject testDummy = generateSpriteObject(sprite.getSprite(0), 0.5f, 0.730f);
+
+        ////////////////////////////////////////////////////////////////////////
+        //Physics
+        ////////////////////////////////////////////////////////////////////////
+        PillboxCollider pb = new PillboxCollider();
+        pb.width = 0.41f;
+        pb.height = 0.94f;
+        testDummy.addComponent(pb);
+
+        RigidBody2D rb = new RigidBody2D();
+        rb.setBodyType(BodyType.Dynamic);
+        rb.setContinuousCollision(false);
+        rb.setFixedRotation(true);
+        rb.setMass(25.0f);
+        testDummy.addComponent(rb);
+
+        testDummy.addComponent(new TestDummy());
+
+        testDummy.transform.zIndex = 10;
+
+
+        return testDummy;
+    }
+
+    public static GameObject generateSlashAttack(boolean right, float atk){
+        ////////////////////////////////////////////////////////////////////////
+        //Textures
+        ////////////////////////////////////////////////////////////////////////
+        SpriteSheet sprite = AssetPool.getSpriteSheet("assets/images/sword.png");
+        GameObject slashAttack = generateSpriteObject(sprite.getSprite(0), 0.25f, 0.25f);
+
+        ////////////////////////////////////////////////////////////////////////
+        //Physics
+        ////////////////////////////////////////////////////////////////////////
+        PillboxCollider pb = new PillboxCollider();
+        pb.width = 0.25f;
+        pb.height = 0.25f;
+        slashAttack.addComponent(pb);
+
+        RigidBody2D rb = new RigidBody2D();
+        rb.setBodyType(BodyType.Dynamic);
+        rb.setContinuousCollision(false);
+        rb.setFixedRotation(true);
+        rb.setMass(25.0f);
+        slashAttack.addComponent(rb);
+
+        slashAttack.addComponent(new SlashAttack(right, atk));
+
+        slashAttack.transform.zIndex = 10;
+
+
+        return slashAttack;
     }
 }

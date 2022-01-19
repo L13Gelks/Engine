@@ -4,6 +4,7 @@ import Engine.Camera;
 import Engine.GameObject;
 import Engine.GameObjectDeserializer;
 import Engine.Transform;
+import Game.entity.Enemy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import components.Component;
@@ -29,6 +30,15 @@ public class Scene {
     private List<GameObject> pendingGameObjects;
     private SceneInitializer sceneInitializer;
     private Physics2D physics2D;
+    private Enemy enemy;
+
+    public void setEnemy(Enemy enemy){
+        this.enemy = enemy;
+    }
+
+    public Enemy getEnemy(){
+        return this.enemy;
+    }
 
     public Scene(SceneInitializer sceneInitializer) {
         this.sceneInitializer = sceneInitializer;
@@ -107,6 +117,14 @@ public class Scene {
                 i--;
             }
         }
+
+        for(GameObject go : pendingGameObjects){
+            gameObjects.add(go);
+            go.start();
+            this.renderer.add(go);
+            this.physics2D.add(go);
+        }
+        pendingGameObjects.clear();
     }
 
     public void render(){

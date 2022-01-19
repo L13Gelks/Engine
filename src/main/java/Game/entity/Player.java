@@ -1,8 +1,6 @@
 package Game.entity;
 
-import Engine.GameObject;
-import Engine.KeyboardListener;
-import Engine.Window;
+import Engine.*;
 import components.Component;
 import components.Ground;
 import components.StateMachine;
@@ -16,6 +14,7 @@ import org.joml.Vector4f;
 import physics2d.Physics2D;
 import physics2d.components.RigidBody2D;
 
+import java.awt.event.KeyListener;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
@@ -25,7 +24,9 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Player extends Entity {
     private enum PlayerState {
         Normal,
-        Invincible
+        Invincible,
+        LightAttack,
+        HeavyAttack
     }
 
     public float walkSpeed = 0.3f;
@@ -41,6 +42,8 @@ public class Player extends Entity {
     public transient boolean onGround = false;
     private transient float groundDebounce = 0.0f;
     private transient float groundDebounceTime = 0.1f;
+    private transient float attackRate = 1.5f;
+    private transient float attackRateTimeLeft = 0.0f;
     private transient RigidBody2D rb;
     private transient StateMachine stateMachine;
     private transient float bigJumpBoostFactor = 1.05f;
@@ -48,8 +51,8 @@ public class Player extends Entity {
     private transient int jumpTime = 0;
     private transient Vector2f acceleration = new Vector2f();
     private transient Vector2f velocity = new Vector2f();
-    private transient boolean isDead = false;
     private transient int enemyBounce = 0;
+    private transient boolean right = true;
 
     private void InitializePlayerStatistics(){
         //INITIALIZE MAIN STATS
@@ -98,12 +101,20 @@ public class Player extends Entity {
         this.rb = gameObject.getComponent(RigidBody2D.class);
         this.stateMachine = gameObject.getComponent(StateMachine.class);
         this.rb.setGravityScale(0.0f);
-
     }
 
     @Override
     public void update(float dt) {
+        if(attackRateTimeLeft != attackRate){
+            attackRateTimeLeft += dt;
+            if(attackRateTimeLeft > attackRate){
+                attackRateTimeLeft = attackRate;
+                playerState = PlayerState.Normal;
+            }
+        }
+
         if (KeyboardListener.isKeyPressed(GLFW_KEY_RIGHT) || KeyboardListener.isKeyPressed(GLFW_KEY_D)) {
+            right = true;
             boolean isRunning = KeyboardListener.isKeyPressed(GLFW_KEY_LEFT_SHIFT);
             this.currentSpeed = isRunning ? runSpeed : walkSpeed;
             this.setStaminaPoints(this.getStaminaPoints() - (((velocity.x < 0.0f ? -velocity.x : velocity.x) * 5) * dt));
@@ -119,6 +130,7 @@ public class Player extends Entity {
                 this.stateMachine.trigger("startRunning");
             }
         } else if (KeyboardListener.isKeyPressed(GLFW_KEY_LEFT) || KeyboardListener.isKeyPressed(GLFW_KEY_A)) {
+            right = false;
             boolean isRunning = KeyboardListener.isKeyPressed(GLFW_KEY_LEFT_SHIFT);
             this.currentSpeed = isRunning ? runSpeed : walkSpeed;
             this.setStaminaPoints(this.getStaminaPoints() - (((velocity.x < 0.0f ? -velocity.x : velocity.x) * 5) * dt));
@@ -135,7 +147,8 @@ public class Player extends Entity {
             }
         } else if (KeyboardListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
             InitializePlayerStatistics();
-        } else {
+        }
+        else {
             this.acceleration.x = 0;
             if (this.velocity.x > 0) {
                 this.velocity.x = Math.max(0, this.velocity.x - slowDownForce);
@@ -185,6 +198,17 @@ public class Player extends Entity {
             groundDebounce = groundDebounceTime;
         }
 
+        if(attackRate == attackRateTimeLeft && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT)){
+            playerState = PlayerState.LightAttack;
+            float dmg = this.getPhysAttack();
+            GameObject slashAttack = Prefabs.generateSlashAttack(right ? true : false, dmg);
+            slashAttack.transform.position = new Vector2f(gameObject.transform.position);
+            slashAttack.transform.position.x += right ? 0.25f : -0.25f;
+            Window.getScene().addGameObjectToScene(slashAttack);
+            attackRateTimeLeft = 0.0f;
+            this.stateMachine.trigger("lightAttack");
+        }
+
         this.velocity.x += this.acceleration.x * dt;
         this.velocity.y += this.acceleration.y * dt;
         this.velocity.x = Math.max(Math.min(this.velocity.x, this.terminalVelocity.x), -this.terminalVelocity.x);
@@ -208,7 +232,7 @@ public class Player extends Entity {
 
     public void checkOnGround() {
         float innerPlayerWidth = this.playerWidth * 0.6f;
-        float yVal = playerState == PlayerState.Normal ? -0.12f : -0.24f;
+        float yVal = -0.12f ;
 
         onGround = Physics2D.checkOnGround(this.gameObject, innerPlayerWidth, yVal);
     }
@@ -222,7 +246,7 @@ public class Player extends Entity {
     }
     @Override
     public void beginCollision(GameObject collidingObject, Contact contact, Vector2f contactNormal) {
-        if (isDead) return;
+        if (this.isDead()) return;
 
         if (collidingObject.getComponent(Ground.class) != null) {
             if (Math.abs(contactNormal.x) > 0.8f) {
@@ -234,23 +258,25 @@ public class Player extends Entity {
             }
         }
     }
+
+    public void enemyBounce() {
+        this.enemyBounce = 16;
+    }
+
+    public boolean isDead() {
+        return super.isDead();
+    }
 //
-//    public void enemyBounce() {
-//        this.enemyBounce = 8;
-//    }
-//
-//    public boolean isDead() {
-//        return this.isDead;
-//    }
-//
-//    public boolean isHurtInvincible() {
-//        return this.hurtInvincibilityTimeLeft > 0 || playWinAnimation;
-//    }
-//
-//    public boolean isInvincible() {
+    public boolean isHurtInvincible() {
+        //return this.hurtInvincibilityTimeLeft > 0;
+        return false;
+    }
+
+    public boolean isInvincible() {
 //        return this.playerState == PlayerState.Invincible ||
-//                this.hurtInvincibilityTimeLeft > 0 || playWinAnimation;
-//    }
+//                this.hurtInvincibilityTimeLeft > 0;
+        return false;
+    }
 //
 //    public void die() {
 //        this.stateMachine.trigger("die");
@@ -288,6 +314,7 @@ public class Player extends Entity {
         return false;
     }
 
+    //TODO: Improve this piece of code
     public void imgui(String string){
         int counter = 0;
         Field[] fields = null;

@@ -10,6 +10,11 @@ public class KeyboardListener {
     private boolean keyPressed[] = new boolean[350];
     private boolean keyBeginPress[] = new boolean[350];
 
+    public static void clear() {
+        Arrays.fill(KeyboardListener.get().keyPressed, false);
+        Arrays.fill(KeyboardListener.get().keyBeginPress, false);
+    }
+
     private KeyboardListener(){
 
     }

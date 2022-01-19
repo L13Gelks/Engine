@@ -32,6 +32,7 @@ public class ImGuiLayer {
     private MenuBar menuBar;
     private SceneHierarchyWindow sceneHierarchyWindow;
     private StatsTestWindow statsTestWindow;
+    private EnemyStatsTestWindow enemyStatsTestWindow;
 
     public ImGuiLayer(long glfwWindow, PickingTexture pickingTexture) {
         this.glfwWindow = glfwWindow;
@@ -40,6 +41,7 @@ public class ImGuiLayer {
         this.menuBar = new MenuBar();
         this.sceneHierarchyWindow = new SceneHierarchyWindow();
         this.statsTestWindow = new StatsTestWindow();
+        this.enemyStatsTestWindow = new EnemyStatsTestWindow();
         //this.StatsTestWindow = new StatsTestWindow();
     }
 
@@ -208,6 +210,8 @@ public class ImGuiLayer {
         gameViewWindow.imgui();
         statsTestWindow.setPlayer(currentScene.getSceneInitializer().getPlayer());
         statsTestWindow.imgui();
+        enemyStatsTestWindow.setEnemy(currentScene.getEnemy());
+        enemyStatsTestWindow.imgui();
 
         endFrame();
     }

@@ -58,6 +58,12 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
         AssetPool.addSpriteSheet("assets/Sprites/Characters/waifuJump.png",
                 new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/waifuJump.png"),
                         416, 454, 30, 0));
+        AssetPool.addSpriteSheet("assets/images/testDummy.png",
+                new SpriteSheet(AssetPool.getTexture("assets/images/testDummy.png"),
+                        716, 1134, 1, 0));
+        AssetPool.addSpriteSheet("assets/images/sword.png",
+                new SpriteSheet(AssetPool.getTexture("assets/images/sword.png"),
+                        321, 321, 1, 0));
 
 
         for (GameObject go : scene.getGameObjects()){
@@ -193,6 +199,20 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
                     }
                     ImGui.popID();
                 }
+                SpriteSheet testDummy = AssetPool.getSpriteSheet("assets/images/testDummy.png");
+                Sprite sprite = testDummy.getSprite(0);
+                float spriteWidth = 32;
+                float spriteHeight = 32;
+                int id = sprite.getTextureID();
+                Vector2f[] textureCoordinates = sprite.getTextureCoordinates();
+
+                ImGui.pushID(uid++);
+                if (ImGui.imageButton(id, spriteWidth, spriteHeight, textureCoordinates[2].x, textureCoordinates[0].y, textureCoordinates[0].x, textureCoordinates[2].y)) {
+                    GameObject object = Prefabs.testDummy();
+                    //Attach this to mouse cursor
+                    levelEditorStuff.getComponent(MouseControls.class).pickupObject(object);
+                }
+                ImGui.popID();
 
                 ImGui.sameLine();
                 ImGui.endTabItem();
