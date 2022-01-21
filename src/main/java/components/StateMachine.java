@@ -10,11 +10,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class StateMachine extends  Component{
+    public boolean lastState = false;
     private class StateTrigger {
         public String state;
         public String trigger;
-
-        public StateTrigger() {}
 
         public StateTrigger(String state, String trigger) {
             this.state = state;
@@ -85,6 +84,9 @@ public class StateMachine extends  Component{
                     if (newStateIndex > -1) {
                         currentState = states.get(newStateIndex);
                         currentState.isActive = true;
+                        lastState = false;
+                    }else if(newStateIndex == stateTransfers.size() - 1){
+                        lastState = true;
                     }
                 }
                 return;
@@ -102,6 +104,14 @@ public class StateMachine extends  Component{
         }
     }
 
+    public boolean isLastState(){
+        return  currentState.lastSprite;
+    }
+
+    public void resetFrame(){
+        currentState.resetAnimation();
+    }
+
     @Override
     public void update(float dt) {
         if (currentState != null) {
@@ -112,7 +122,9 @@ public class StateMachine extends  Component{
             }
         }
     }
-
+    public String getCurrentStateName(){
+        return currentState.title;
+    }
     @Override
     public void editorUpdate(float dt) {
         if (currentState != null) {

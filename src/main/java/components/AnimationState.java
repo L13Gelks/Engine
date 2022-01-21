@@ -12,6 +12,7 @@ public class AnimationState {
     private static Sprite defaultSprite = new Sprite();
     private transient float timeTracker = 0.0f;
     private transient  int currentSprite = 0;
+    public transient  boolean lastSprite = false;
     public boolean doesLoop = false;
     public boolean isActive = false;
 
@@ -36,6 +37,8 @@ public class AnimationState {
                 if(timeTracker <= dt){
                     if(!(currentSprite == animationFrames.size() - 1 && !doesLoop)){
                         currentSprite = (currentSprite + 1) % animationFrames.size();
+                    }else if (!doesLoop && currentSprite == animationFrames.size() - 1){
+                        lastSprite = true;
                     }
                     timeTracker = animationFrames.get(currentSprite).frameTime;
                 }
@@ -48,5 +51,10 @@ public class AnimationState {
             return animationFrames.get(currentSprite).sprite;
         }
         return defaultSprite;
+    }
+
+    public void resetAnimation(){
+        currentSprite = 0;
+        lastSprite = false;
     }
 }

@@ -49,21 +49,33 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
         AssetPool.addSpriteSheet("assets/Images/gizmos.png",
                 new SpriteSheet(AssetPool.getTexture("assets/Images/gizmos.png"),
                         24, 48, 3, 0));
-        AssetPool.addSpriteSheet("assets/Sprites/Characters/waifuIdle.png",
-                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/waifuIdle.png"),
-                        416, 454, 16, 0));
-        AssetPool.addSpriteSheet("assets/Sprites/Characters/waifuRun.png",
-                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/waifuRun.png"),
-                        416, 454, 20, 0));
-        AssetPool.addSpriteSheet("assets/Sprites/Characters/waifuJump.png",
-                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/waifuJump.png"),
-                        416, 454, 30, 0));
+        AssetPool.addSpriteSheet("assets/Sprites/Characters/idle.png",
+                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/idle.png"),
+                        512, 512, 30, 0));
+        AssetPool.addSpriteSheet("assets/Sprites/Characters/walk.png",
+                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/walk.png"),
+                        512, 512, 30, 0));
+        AssetPool.addSpriteSheet("assets/Sprites/Characters/jog.png",
+                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/jog.png"),
+                        512, 512, 30, 0));
+        AssetPool.addSpriteSheet("assets/Sprites/Characters/jumpUp.png",
+                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/jumpUp.png"),
+                        512, 512, 16, 0));
+        AssetPool.addSpriteSheet("assets/Sprites/Characters/jumpDown.png",
+                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/jumpDown.png"),
+                        512, 512, 31, 0));
         AssetPool.addSpriteSheet("assets/images/testDummy.png",
                 new SpriteSheet(AssetPool.getTexture("assets/images/testDummy.png"),
                         716, 1134, 1, 0));
         AssetPool.addSpriteSheet("assets/images/sword.png",
                 new SpriteSheet(AssetPool.getTexture("assets/images/sword.png"),
                         321, 321, 1, 0));
+        AssetPool.addSpriteSheet("assets/Sprites/Characters/chest.png",
+                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/chest.png"),
+                        512, 512, 30, 0));
+        AssetPool.addSpriteSheet("assets/Sprites/Characters/heal1.png",
+                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/heal1.png"),
+                        512, 512, 91, 0));
 
 
         for (GameObject go : scene.getGameObjects()){
@@ -85,7 +97,7 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
 
 
     @Override
-    public void imgui(){
+    public void imgui() {
         ImGui.begin("Level Editr");
         levelEditorStuff.imgui();
         ImGui.end();
@@ -183,7 +195,7 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
             if(ImGui.beginTabItem("Prefabs")){
                 int uid = 0;
                 if(!isPlayerGenerated){
-                    SpriteSheet playerSprites = AssetPool.getSpriteSheet("assets/Sprites/Characters/waifuRun.png");
+                    SpriteSheet playerSprites = AssetPool.getSpriteSheet("assets/Sprites/Characters/idle.png");
                     Sprite sprite = playerSprites.getSprite(0);
                     float spriteWidth = 32;
                     float spriteHeight = 32;
@@ -214,7 +226,21 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
                 }
                 ImGui.popID();
 
+                /////////////////
                 ImGui.sameLine();
+                SpriteSheet chest = AssetPool.getSpriteSheet("assets/Sprites/Characters/chest.png");
+                Sprite chestSprite = chest.getSprite(0);
+                id = chestSprite.getTextureID();
+                textureCoordinates = chestSprite.getTextureCoordinates();
+
+                ImGui.pushID(uid++);
+                if (ImGui.imageButton(id, spriteWidth, spriteHeight, textureCoordinates[2].x, textureCoordinates[0].y, textureCoordinates[0].x, textureCoordinates[2].y)) {
+                    GameObject object = Prefabs.generateWoodenChest();
+                    //Attach this to mouse cursor
+                    levelEditorStuff.getComponent(MouseControls.class).pickupObject(object);
+                }
+                ImGui.popID();
+                /////////////////
                 ImGui.endTabItem();
             }
             ImGui.endTabBar();

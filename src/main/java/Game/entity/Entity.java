@@ -54,7 +54,7 @@ public class Entity extends Component {
     private transient float poisonResistance;
     private transient float stunResistance;
 
-    public void receiveDamage(float damage){
+    public void receiveDamage(float damage) {
         this.setHealthPoints(this.getHealthPoints() - damage);
     }
 

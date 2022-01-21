@@ -9,7 +9,7 @@ import org.joml.Vector2f;
 import physics2d.Physics2D;
 import physics2d.components.RigidBody2D;
 
-public class TestDummy extends Enemy{
+public class TestDummy extends Enemy {
     private transient boolean goingRight = false;
     private transient RigidBody2D rb;
     private transient float walkSpeed = 0.0f;

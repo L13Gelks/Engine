@@ -22,21 +22,25 @@ import static org.lwjgl.glfw.GLFW.*;
 
 
 public class Player extends Entity {
-    private enum PlayerState {
+    public enum PlayerState {
         Normal,
         Invincible,
         LightAttack,
-        HeavyAttack
+        HeavyAttack,
+        Interaction
     }
 
-    public float walkSpeed = 0.3f;
-    public float runSpeed = 1.9f;
-    public float currentSpeed = 0.0f;
-    public float jumpBoost = 1.0f;
-    public float jumpImpulse = 3.0f;
-    public float slowDownForce = 0.05f;
+    public transient float walkSpeed = 0.2f;
+    public transient float runSpeed = 1.0f;
+    public transient float currentSpeed = 0.0f;
+    public transient float jumpBoost = 1.0f;
+    public transient float jumpImpulse = 3.0f;
+    public transient float slowDownForce = 0.05f;
 
-    public Vector2f terminalVelocity = new Vector2f(2.1f, 3.1f);
+    public Vector2f terminalVelocity = new Vector2f(1.2f, 3.1f);
+    public transient float maxWalkSpeed = 0.5f;
+    //public transient final float maxJogSpeed = 1f;
+    //public transient final float maxRunSpeed = 2f;
 
     private PlayerState playerState = PlayerState.Normal;
     public transient boolean onGround = false;
@@ -47,14 +51,14 @@ public class Player extends Entity {
     private transient RigidBody2D rb;
     private transient StateMachine stateMachine;
     private transient float bigJumpBoostFactor = 1.05f;
-    private transient float playerWidth = 0.25f;
+    private transient float playerWidth = 0.5f;
     private transient int jumpTime = 0;
     private transient Vector2f acceleration = new Vector2f();
     private transient Vector2f velocity = new Vector2f();
     private transient int enemyBounce = 0;
     private transient boolean right = true;
 
-    private void InitializePlayerStatistics(){
+    private void InitializePlayerStatistics() {
         //INITIALIZE MAIN STATS
         this.setMaxHealthPoints(90.0f + (10.0f * this.getHealth()));
         this.setHealthPoints(this.getMaxHealthPoints());
@@ -103,72 +107,134 @@ public class Player extends Entity {
         this.rb.setGravityScale(0.0f);
     }
 
+    public PlayerState getPlayerState(){
+        return playerState;
+    }
+    private transient  boolean isHealing = false;
+    private transient  float castCoolDown = 2.0f;
+    private transient  float castCoolDownLeft = castCoolDown;
+
     @Override
     public void update(float dt) {
+
+        if (castCoolDownLeft < castCoolDown){
+            castCoolDownLeft += dt;
+        }else{
+            castCoolDownLeft = castCoolDown;
+        }
+
+        if(KeyboardListener.isKeyPressed(GLFW_KEY_H) && castCoolDownLeft == castCoolDown){
+            stateMachine.trigger("startHealing");
+            if(stateMachine.isLastState()){
+                System.out.println(stateMachine.getCurrentStateName());
+                System.out.println("Reset start");
+                stateMachine.resetFrame();
+                castCoolDownLeft = 0.0f;
+                stateMachine.trigger("stopHealing");
+            }
+            isHealing = true;
+        } else if (isHealing && !KeyboardListener.isKeyPressed(GLFW_KEY_H)){
+            stateMachine.resetFrame();
+            stateMachine.trigger("stopHealing");
+            isHealing = false;
+            if(castCoolDownLeft == castCoolDown){
+                castCoolDownLeft = 0.0f;
+            }
+        }
+
         if(attackRateTimeLeft != attackRate){
             attackRateTimeLeft += dt;
             if(attackRateTimeLeft > attackRate){
                 attackRateTimeLeft = attackRate;
-                playerState = PlayerState.Normal;
             }
         }
 
-        if (KeyboardListener.isKeyPressed(GLFW_KEY_RIGHT) || KeyboardListener.isKeyPressed(GLFW_KEY_D)) {
-            right = true;
-            boolean isRunning = KeyboardListener.isKeyPressed(GLFW_KEY_LEFT_SHIFT);
-            this.currentSpeed = isRunning ? runSpeed : walkSpeed;
-            this.setStaminaPoints(this.getStaminaPoints() - (((velocity.x < 0.0f ? -velocity.x : velocity.x) * 5) * dt));
-            this.currentSpeed = this.getStaminaPoints() > 0 ? this.currentSpeed : 0.0f;
-
-            this.gameObject.transform.scale.x = playerWidth;
-            this.acceleration.x = currentSpeed;
-
-            if (this.velocity.x < 0) {
-                this.stateMachine.trigger("switchDirection");
-                this.velocity.x += slowDownForce;
-            } else {
-                this.stateMachine.trigger("startRunning");
+        if(!isHealing){
+            if(KeyboardListener.isKeyPressed(GLFW_KEY_E)){
+                playerState = PlayerState.Interaction;
             }
-        } else if (KeyboardListener.isKeyPressed(GLFW_KEY_LEFT) || KeyboardListener.isKeyPressed(GLFW_KEY_A)) {
-            right = false;
-            boolean isRunning = KeyboardListener.isKeyPressed(GLFW_KEY_LEFT_SHIFT);
-            this.currentSpeed = isRunning ? runSpeed : walkSpeed;
-            this.setStaminaPoints(this.getStaminaPoints() - (((velocity.x < 0.0f ? -velocity.x : velocity.x) * 5) * dt));
-            this.currentSpeed = this.getStaminaPoints() > 0 ? this.currentSpeed : 0.0f;
 
-            this.gameObject.transform.scale.x = -playerWidth;
-            this.acceleration.x = -currentSpeed;
+            if (KeyboardListener.isKeyPressed(GLFW_KEY_RIGHT) || KeyboardListener.isKeyPressed(GLFW_KEY_D)) {
+                right = true;
+                boolean isRunning = KeyboardListener.isKeyPressed(GLFW_KEY_LEFT_SHIFT);
+                this.currentSpeed = isRunning ? runSpeed : walkSpeed;
+                this.setStaminaPoints(this.getStaminaPoints() - (((velocity.x < 0.0f ? -velocity.x : velocity.x) * 5) * dt));
+                this.currentSpeed = this.getStaminaPoints() > 0 ? this.currentSpeed : 0.0f;
 
-            if (this.velocity.x > 0) {
-                this.stateMachine.trigger("switchDirection");
-                this.velocity.x -= slowDownForce;
-            } else {
-                this.stateMachine.trigger("startRunning");
+                this.gameObject.transform.scale.x = playerWidth;
+                this.acceleration.x = currentSpeed;
+
+                if (this.velocity.x < 0) {
+                    this.stateMachine.trigger("switchDirection");
+                    this.velocity.x += slowDownForce;
+                }
+            } else if (KeyboardListener.isKeyPressed(GLFW_KEY_LEFT) || KeyboardListener.isKeyPressed(GLFW_KEY_A)) {
+                right = false;
+                boolean isRunning = KeyboardListener.isKeyPressed(GLFW_KEY_LEFT_SHIFT);
+                this.currentSpeed = isRunning ? runSpeed : walkSpeed;
+                this.setStaminaPoints(this.getStaminaPoints() - (((velocity.x < 0.0f ? -velocity.x : velocity.x) * 5) * dt));
+                this.currentSpeed = this.getStaminaPoints() > 0 ? this.currentSpeed : 0.0f;
+
+                this.gameObject.transform.scale.x = -playerWidth;
+                this.acceleration.x = -currentSpeed;
+
+                if (this.velocity.x > 0) {
+                    this.stateMachine.trigger("switchDirection");
+                    this.velocity.x -= slowDownForce;
+                }
+            } else if (KeyboardListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
+                InitializePlayerStatistics();
             }
-        } else if (KeyboardListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
-            InitializePlayerStatistics();
+            else {
+                this.acceleration.x = 0;
+                if (this.velocity.x > 0) {
+                    this.velocity.x = Math.max(0, this.velocity.x - slowDownForce);
+                } else if (this.velocity.x < 0) {
+                    this.velocity.x = Math.min(0, this.velocity.x + slowDownForce);
+                }
+
+                if (this.velocity.x == 0) {
+                    this.stateMachine.trigger("stopWalking");
+                    if(this.getStaminaPoints() > this.getMaxStaminaPoints()){
+                        this.setStaminaPoints(this.getMaxStaminaPoints());
+                    }else if(this.getStaminaPoints() < this.getMaxStaminaPoints()){
+                        this.setStaminaPoints(this.getStaminaPoints() + (10.0f * dt));
+                    }
+                }
+            }
+
+
         }
-        else {
-            this.acceleration.x = 0;
-            if (this.velocity.x > 0) {
-                this.velocity.x = Math.max(0, this.velocity.x - slowDownForce);
-            } else if (this.velocity.x < 0) {
-                this.velocity.x = Math.min(0, this.velocity.x + slowDownForce);
-            }
 
-            if (this.velocity.x == 0) {
-                this.stateMachine.trigger("stopRunning");
-                if(this.getStaminaPoints() > this.getMaxStaminaPoints()){
-                    this.setStaminaPoints(this.getMaxStaminaPoints());
-                }else if(this.getStaminaPoints() < this.getMaxStaminaPoints()){
-                    this.setStaminaPoints(this.getStaminaPoints() + (10.0f * dt));
+        if(this.velocity.x > 0){
+            if(this.acceleration.x > 0){
+                if(this.velocity.x < maxWalkSpeed){
+                    this.stateMachine.trigger("startWalking");
+                } else if(this.velocity.x >= maxWalkSpeed){
+                    this.stateMachine.trigger("startJogging");
+                }
+            }else{
+                if(this.velocity.x < maxWalkSpeed){
+                    this.stateMachine.trigger("stopJogging");
+                }
+            }
+        }else{
+            if(this.acceleration.x < 0){
+                if(this.velocity.x > -maxWalkSpeed){
+                    this.stateMachine.trigger("startWalking");
+                } else if(this.velocity.x <= -maxWalkSpeed){
+                    this.stateMachine.trigger("startJogging");
+                }
+            }else{
+                if(this.velocity.x < maxWalkSpeed){
+                    this.stateMachine.trigger("stopJogging");
                 }
             }
         }
 
         checkOnGround();
 
-        if (KeyboardListener.isKeyPressed(GLFW_KEY_SPACE) && (jumpTime > 0 || onGround || groundDebounce > 0)) {
+        if (KeyboardListener.isKeyPressed(GLFW_KEY_SPACE) && !isHealing && (jumpTime > 0 || onGround || groundDebounce > 0)) {
             if ((onGround || groundDebounce > 0) && jumpTime == 0 && this.getStaminaPoints() >= 5.f) {
                 //AssetPool.getSound("assets/sounds/jump-small.ogg").play();
                 jumpTime = 28;
@@ -203,7 +269,7 @@ public class Player extends Entity {
             float dmg = this.getPhysAttack();
             GameObject slashAttack = Prefabs.generateSlashAttack(right ? true : false, dmg);
             slashAttack.transform.position = new Vector2f(gameObject.transform.position);
-            slashAttack.transform.position.x += right ? 0.25f : -0.25f;
+            slashAttack.transform.position.x += right ? 0.5f : -0.5f;
             Window.getScene().addGameObjectToScene(slashAttack);
             attackRateTimeLeft = 0.0f;
             this.stateMachine.trigger("lightAttack");
@@ -220,19 +286,32 @@ public class Player extends Entity {
             if(this.velocity.y > 0){
                 stateMachine.trigger("jumpUp");
             }else {
-                stateMachine.trigger("jumpDown");
+                if(stateMachine.getCurrentStateName().equals("jumpUp")){
+                    stateMachine.resetFrame();
+                    stateMachine.trigger("jumpDown");
+                }else if(stateMachine.getCurrentStateName().equals("jumpDown") && stateMachine.lastState){
+                    stateMachine.resetFrame();
+                    stateMachine.trigger("jumpDown2");
+                }else if(!stateMachine.getCurrentStateName().equals("jumpDown")){
+                    stateMachine.trigger("jumpDown2");
+                }
 
             }
         } else {
+            if(stateMachine.getCurrentStateName().equals("jumpDown")){
+                stateMachine.resetFrame();
+            }
             stateMachine.trigger("stopJumping");
         }
+
         this.setStaminaPoints(this.getStaminaPoints() <= 0.0f ? 0.0f : this.getStaminaPoints());
     }
 
 
+
     public void checkOnGround() {
         float innerPlayerWidth = this.playerWidth * 0.6f;
-        float yVal = -0.12f ;
+        float yVal = -0.24f ;
 
         onGround = Physics2D.checkOnGround(this.gameObject, innerPlayerWidth, yVal);
     }
@@ -327,13 +406,13 @@ public class Player extends Entity {
         System.arraycopy(secondArray, 0, fields, fal, sal);
 
         for(Field field : fields){
-            if(string.equals("Player") && counter < 21){
+            if(string.equals("Player") && counter < 23){
                 imgui(field);
-            }else  if(string.equals("Level Stats") && counter >= 21 && counter < 28){
+            }else  if(string.equals("Level Stats") && counter >= 23 && counter < 31){
                 imgui(field);
-            }else  if(string.equals("Stats") && counter >= 29 && counter < 49){
+            }else  if(string.equals("Stats") && counter >= 31 && counter < 51){
                 imgui(field);
-            }else  if(string.equals("Resistances") && counter >= 49 && counter < 63){
+            }else  if(string.equals("Resistances") && counter >= 51){
                 imgui(field);
             }
             counter++;
