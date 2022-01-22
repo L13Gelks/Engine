@@ -1,8 +1,6 @@
 package components;
 
 import Engine.GameObject;
-import Game.entity.Entity;
-import Game.entity.Player;
 import editor.JImGui;
 import imgui.ImGui;
 import imgui.type.ImInt;
@@ -10,12 +8,8 @@ import org.jbox2d.dynamics.contacts.Contact;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public abstract class Component {
     private static int ID_COUNTER = 0;

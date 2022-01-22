@@ -9,10 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL15C.glGenBuffers;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class Shader {
     private int shaderProgramID;
@@ -51,8 +49,6 @@ public class Shader {
             }else{
                 throw new IOException("Unexpected token" + secondPattern);
             }
-//            System.out.print(vertexSource);
-//            System.out.print(fragmentSource);
         }catch(IOException e){
             e.printStackTrace();
             assert false: "Error: Could not open shader file " + filepath;

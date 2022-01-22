@@ -1,7 +1,6 @@
 package components;
 
 import org.joml.Vector2f;
-import org.w3c.dom.Text;
 import renderer.Texture;
 
 public class Sprite {

@@ -42,7 +42,6 @@ public class ImGuiLayer {
         this.sceneHierarchyWindow = new SceneHierarchyWindow();
         this.statsTestWindow = new StatsTestWindow();
         this.enemyStatsTestWindow = new EnemyStatsTestWindow();
-        //this.StatsTestWindow = new StatsTestWindow();
     }
 
     public GameViewWindow getGameViewWindow(){

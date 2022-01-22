@@ -7,7 +7,6 @@ import components.Component;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import renderer.DebugDraw;
-import util.Settings;
 
 public class UI extends Component {
     Vector3f red = new Vector3f(1.f ,0.0f, 0.0f);

@@ -4,7 +4,6 @@ import Engine.GameObject;
 import Engine.Window;
 import imgui.ImGui;
 import imgui.flag.ImGuiTreeNodeFlags;
-
 import java.util.List;
 
 public class SceneHierarchyWindow {

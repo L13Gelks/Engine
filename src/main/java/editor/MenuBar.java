@@ -1,7 +1,6 @@
 package editor;
 
 import imgui.ImGui;
-import imgui.flag.ImGuiWindowFlags;
 import observers.EventSystem;
 import observers.events.Event;
 import observers.events.EventType;

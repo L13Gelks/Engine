@@ -1,7 +1,6 @@
 package components;
 
 import util.AssetPool;
-
 import java.util.ArrayList;
 import java.util.List;
 

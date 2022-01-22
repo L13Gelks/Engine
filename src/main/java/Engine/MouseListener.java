@@ -3,6 +3,7 @@ package Engine;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
+import util.Settings;
 
 import java.util.Arrays;
 
@@ -10,8 +11,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 public class MouseListener {
-    private static float currentResX = 1600;
-    private static float currentResY = 900;
 
     private static MouseListener instance;
     private double scrollX, scrollY;
@@ -187,10 +186,10 @@ public class MouseListener {
 
     public static Vector2f getScreen(){
         float currentY = getY() - get().gameViewportPos.y;
-        currentY = currentResY - ((currentY / get().gameViewportSize.y) * currentResY);
+        currentY = Settings.currentResY - ((currentY / get().gameViewportSize.y) * Settings.currentResY);
 
         float currentX = getX() - get().gameViewportPos.x;
-        currentX = (currentX / get().gameViewportSize.x) * currentResX;
+        currentX = (currentX / get().gameViewportSize.x) * Settings.currentResX;
 
         return  new Vector2f(currentX, currentY);
     }

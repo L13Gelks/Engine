@@ -6,7 +6,6 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import util.AssetPool;
 import util.JMath;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

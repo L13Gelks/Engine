@@ -52,7 +52,4 @@ public class EnemyStatsTestWindow {
     public void  setEnemy(Enemy enemy){
         this.enemy = enemy;
     }
-    public Enemy  getEnemy(){
-        return this.enemy;
-    }
 }

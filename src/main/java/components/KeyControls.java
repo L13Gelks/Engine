@@ -7,7 +7,6 @@ import Game.entity.Player;
 import editor.PropertiesWindow;
 import scenes.LevelEditorSceneInitializer;
 import util.Settings;
-
 import java.util.ArrayList;
 import java.util.List;
 

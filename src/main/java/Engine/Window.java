@@ -13,20 +13,16 @@ import scenes.LevelSceneInitializer;
 import scenes.Scene;
 import scenes.SceneInitializer;
 import util.AssetPool;
+import util.Settings;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.stb.STBImage.stbi_image_free;
-import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.system.windows.User32.*;
 
 public class Window implements Observer {
-    private final int currentResX = 1600;
-    private final int currentResY = 900;
-
     private int width, height;
     private final String windowName;
     private long glfwWindow;
@@ -40,8 +36,8 @@ public class Window implements Observer {
     private PickingTexture pickingTexture;
     //private thus only one instance exists
     private Window(){
-        this.height = currentResY;
-        this.width = currentResX;
+        this.height = Settings.currentResY;
+        this.width = Settings.currentResX;
         this.windowName = "Game";
 
         EventSystem.addObserver(this);
@@ -127,9 +123,9 @@ public class Window implements Observer {
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-        this.frameBuffer = new FrameBuffer(currentResX, currentResY);
-        this.pickingTexture = new PickingTexture(currentResX, currentResY);
-        glViewport(0,0, currentResX, currentResY);
+        this.frameBuffer = new FrameBuffer(Settings.currentResX, Settings.currentResY);
+        this.pickingTexture = new PickingTexture(Settings.currentResX, Settings.currentResY);
+        glViewport(0,0, Settings.currentResX, Settings.currentResY);
 
         this.imGuiLayer = new ImGuiLayer(glfwWindow, pickingTexture);
         this.imGuiLayer.initImGui();
@@ -155,7 +151,7 @@ public class Window implements Observer {
             //Render pass1. Render to picking texture
             glDisable(GL_BLEND);
             pickingTexture.enableWriting();
-            glViewport(0,0 ,currentResX, currentResY);
+            glViewport(0,0 ,Settings.currentResX, Settings.currentResY);
             glClearColor(0,0,0,0);
             glClear(GL_COLOR_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 

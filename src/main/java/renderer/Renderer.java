@@ -2,10 +2,7 @@ package renderer;
 
 import Engine.GameObject;
 import components.SpriteRenderer;
-
-import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

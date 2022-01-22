@@ -51,7 +51,7 @@ public class LevelSceneInitializer extends SceneInitializer {
     }
 
     @Override
-    public void imgui() {
+    public void imGui() {
 
     }
 }

@@ -2,7 +2,6 @@ package components;
 
 import Engine.Transform;
 import editor.JImGui;
-import imgui.ImGui;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import renderer.Texture;

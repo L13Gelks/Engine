@@ -3,7 +3,6 @@ package components;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
 import imgui.type.ImString;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

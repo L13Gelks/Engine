@@ -16,8 +16,6 @@ import physics2d.components.PillboxCollider;
 import physics2d.components.RigidBody2D;
 import renderer.DebugDraw;
 
-import java.awt.*;
-
 public class Physics2D {
     private Vec2 gravity = new Vec2(0, -10.0f);
     private World world = new World(gravity);

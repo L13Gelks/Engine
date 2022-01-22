@@ -2,14 +2,7 @@ package components;
 
 import Engine.MouseListener;
 import editor.PropertiesWindow;
-import Engine.GameObject;
-import Engine.Prefabs;
-import Engine.Window;
-import org.joml.Vector2f;
-import org.joml.Vector4f;
 import renderer.DebugDraw;
-
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class TranslateGizmo extends Gizmo {
 

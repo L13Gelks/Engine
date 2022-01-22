@@ -163,7 +163,7 @@ public class Scene {
     }
 
     public void imgui() {
-        this.sceneInitializer.imgui();
+        this.sceneInitializer.imGui();
     }
 
     public GameObject createGameObject(String name){
