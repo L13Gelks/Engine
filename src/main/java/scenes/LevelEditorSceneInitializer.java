@@ -75,9 +75,10 @@ public class LevelEditorSceneInitializer extends SceneInitializer {
             if(ImGui.beginTabItem("Prefabs")) {
                 PrefabsFactory prefabsFactory = new PrefabsFactory(levelEditorStuff);
                 if(!isPlayerGenerated){
-                    prefabsFactory.generatePlayer();
+
                     isPlayerGenerated = true;
                 }
+                prefabsFactory.generatePlayer();
                 prefabsFactory.generateTestDummy();
                 ImGui.sameLine();
                 prefabsFactory.generateWoodenChest();

@@ -11,12 +11,14 @@ uniform mat4 uView;
 out vec4 fColor;
 out vec2 fTextureCoordinates;
 out float fTextureID;
+out vec3 caca;
 
 void main(){
     fColor = aColor;
     fTextureCoordinates = aTextureCoordinates;
     fTextureID = aTextureID;
     gl_Position = uProjection * uView * vec4(aPos, 1.0);
+    caca = aPos;
 }
 
 #type fragment
@@ -25,6 +27,7 @@ void main(){
 in vec4 fColor;
 in vec2 fTextureCoordinates;
 in float fTextureID;
+in vec3 caca;
 
 uniform sampler2D uTextures[8];
 

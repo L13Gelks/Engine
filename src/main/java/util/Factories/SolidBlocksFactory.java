@@ -20,7 +20,7 @@ public class SolidBlocksFactory {
 
     public SolidBlocksFactory(GameObject levelEditorStuff){
         this.levelEditorStuff = levelEditorStuff;
-        spriteSheet = AssetPool.getSpriteSheet("assets/Sprites/Tiles/NaturalWorld.png");
+        spriteSheet = AssetPool.getSpriteSheet("assets/Sprites/Tiles/world.png");
         init();
     }
 

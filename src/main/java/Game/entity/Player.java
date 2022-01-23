@@ -30,15 +30,15 @@ public class Player extends Entity {
         Interaction
     }
 
-    public transient float walkSpeed = 0.2f;
-    public transient float runSpeed = 1.0f;
+    public transient float walkSpeed = 0.6f;
+    public transient float runSpeed = 1.7f;
     public transient float currentSpeed = 0.0f;
     public transient float jumpBoost = 1.0f;
     public transient float jumpImpulse = 3.0f;
     public transient float slowDownForce = 0.05f;
 
-    public Vector2f terminalVelocity = new Vector2f(1.2f, 3.1f);
-    public transient float maxWalkSpeed = 0.5f;
+    public Vector2f terminalVelocity = new Vector2f(2.1f, 3.1f);
+    public transient float maxWalkSpeed = 0.7f;
     //public transient final float maxJogSpeed = 1f;
     //public transient final float maxRunSpeed = 2f;
 
@@ -50,7 +50,6 @@ public class Player extends Entity {
     private transient float attackRateTimeLeft = 0.0f;
     private transient RigidBody2D rb;
     private transient StateMachine stateMachine;
-    private transient float bigJumpBoostFactor = 1.05f;
     private transient float playerWidth = 0.5f;
     private transient int jumpTime = 0;
     private transient Vector2f acceleration = new Vector2f();
@@ -107,15 +106,20 @@ public class Player extends Entity {
         this.rb.setGravityScale(0.0f);
     }
 
-    public PlayerState getPlayerState(){
-        return playerState;
-    }
     private transient  boolean isHealing = false;
     private transient  float castCoolDown = 2.0f;
     private transient  float castCoolDownLeft = castCoolDown;
 
+    public PlayerState getPlayerState(){
+        return playerState;
+    }
+
     @Override
     public void update(float dt) {
+
+        if(KeyboardListener.isKeyPressed(GLFW_KEY_R) && stateMachine.getCurrentStateName().equals("Idle")){
+            //stateMachine.trigger("startAttacking");
+        }
 
         if (castCoolDownLeft < castCoolDown){
             castCoolDownLeft += dt;
@@ -162,7 +166,14 @@ public class Player extends Entity {
                 this.currentSpeed = this.getStaminaPoints() > 0 ? this.currentSpeed : 0.0f;
 
                 this.gameObject.transform.scale.x = playerWidth;
-                this.acceleration.x = currentSpeed;
+
+                if(this.velocity.x <= maxWalkSpeed){
+                    this.acceleration.x = currentSpeed;
+                } else if(isRunning){
+                    this.acceleration.x = currentSpeed;
+                } else {
+                    this.acceleration.x = 0;
+                }
 
                 if (this.velocity.x < 0) {
                     this.stateMachine.trigger("switchDirection");
@@ -176,7 +187,14 @@ public class Player extends Entity {
                 this.currentSpeed = this.getStaminaPoints() > 0 ? this.currentSpeed : 0.0f;
 
                 this.gameObject.transform.scale.x = -playerWidth;
-                this.acceleration.x = -currentSpeed;
+
+                if(this.velocity.x >= -maxWalkSpeed){
+                    this.acceleration.x = -currentSpeed;
+                }else if(isRunning){
+                    this.acceleration.x = -currentSpeed;
+                }else{
+                    this.acceleration.x = 0;
+                }
 
                 if (this.velocity.x > 0) {
                     this.stateMachine.trigger("switchDirection");

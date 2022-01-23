@@ -39,7 +39,7 @@ public class Prefabs {
         }
         idle.setLoop(true);
         //WALK
-        sprite = AssetPool.getSpriteSheet("assets/Sprites/Characters/walk.png");
+        sprite = AssetPool.getSpriteSheet("assets/Sprites/Characters/movement.png");
         AnimationState walk = new AnimationState();
         walk.title = "Walk";
         for (int i = 0; i < 30; i++){
@@ -47,10 +47,10 @@ public class Prefabs {
         }
         walk.setLoop(true);
         //Jog
-        sprite = AssetPool.getSpriteSheet("assets/Sprites/Characters/jog.png");
+        sprite = AssetPool.getSpriteSheet("assets/Sprites/Characters/movement.png");
         AnimationState jog = new AnimationState();
         jog.title = "Jog";
-        for (int i = 0; i < 30; i++){
+        for (int i = 30; i < 60; i++){
             jog.addFrame(sprite.getSprite(i), (defaultFrameTime / 5.0f));
         }
         jog.setLoop(true);
@@ -87,6 +87,14 @@ public class Prefabs {
             heal.addFrame(sprite.getSprite(i), healSpeed);
         }
         heal.setLoop(false);
+        //Attack
+        sprite = AssetPool.getSpriteSheet("assets/Sprites/Characters/attack.png");
+        AnimationState attack = new AnimationState();
+        attack.title = "startAttacking";
+        for (int i = 0; i < 16; i++){
+            attack.addFrame(sprite.getSprite(i), defaultFrameTime);
+        }
+        attack.setLoop(false);
         ////////////////////////////////////////////////////////////////////////
         //States
         ////////////////////////////////////////////////////////////////////////
@@ -101,6 +109,7 @@ public class Prefabs {
         stateMachine.addState(jumpDown2);
 
         stateMachine.addState(heal);
+        stateMachine.addState(attack);
 
         stateMachine.setDefaultState(idle.title);
         stateMachine.addState(idle.title, walk.title, "startWalking");
@@ -118,6 +127,9 @@ public class Prefabs {
 
         stateMachine.addState(idle.title, heal.title, "startHealing");
         stateMachine.addState(heal.title, idle.title, "stopHealing");
+
+        stateMachine.addState(idle.title, attack.title, "startAttacking");
+        stateMachine.addState(attack.title, idle.title, "stopAttacking");
         player.addComponent(stateMachine);
         ////////////////////////////////////////////////////////////////////////
         //Physics

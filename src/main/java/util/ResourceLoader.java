@@ -25,12 +25,9 @@ public class ResourceLoader {
         AssetPool.addSpriteSheet("assets/Sprites/Characters/idle.png",
                 new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/idle.png"),
                         512, 512, 30, 0));
-        AssetPool.addSpriteSheet("assets/Sprites/Characters/walk.png",
-                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/walk.png"),
-                        512, 512, 30, 0));
-        AssetPool.addSpriteSheet("assets/Sprites/Characters/jog.png",
-                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/jog.png"),
-                        512, 512, 30, 0));
+        AssetPool.addSpriteSheet("assets/Sprites/Characters/movement.png",
+                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/movement.png"),
+                        512, 512, 60, 0));
         AssetPool.addSpriteSheet("assets/Sprites/Characters/jumpUp.png",
                 new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/jumpUp.png"),
                         512, 512, 16, 0));
@@ -43,6 +40,9 @@ public class ResourceLoader {
         AssetPool.addSpriteSheet("assets/Sprites/Characters/heal1.png",
                 new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/heal1.png"),
                         512, 512, 91, 0));
+        AssetPool.addSpriteSheet("assets/Sprites/Characters/attack.png",
+                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Characters/attack.png"),
+                        512, 512, 31, 0));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,8 +70,8 @@ public class ResourceLoader {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static void loadWorldResources(){
-        AssetPool.addSpriteSheet("assets/Sprites/Tiles/NaturalWorld.png",
-                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Tiles/NaturalWorld.png"),
-                        128, 127, 18, 0));
+        AssetPool.addSpriteSheet("assets/Sprites/Tiles/world.png",
+                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Tiles/world.png"),
+                        256, 256, 33, 0));
     }
 }
