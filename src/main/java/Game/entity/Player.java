@@ -3,6 +3,7 @@ package Game.entity;
 import Engine.*;
 import components.Component;
 import components.Ground;
+import components.Light;
 import components.StateMachine;
 import editor.JImGui;
 import imgui.ImGui;
@@ -22,6 +23,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 
 public class Player extends Entity {
+
     public enum PlayerState {
         Normal,
         Invincible,
@@ -56,6 +58,10 @@ public class Player extends Entity {
     private transient Vector2f velocity = new Vector2f();
     private transient int enemyBounce = 0;
     private transient boolean right = true;
+
+    //Todo: lights code
+    public  boolean hasLight = false;
+    public  GameObject playersLight = null;
 
     private void InitializePlayerStatistics() {
         //INITIALIZE MAIN STATS
@@ -116,6 +122,10 @@ public class Player extends Entity {
 
     @Override
     public void update(float dt) {
+        if(hasLight){
+            playersLight.transform.position = this.gameObject.transform.position;
+            System.out.println("player: " + this.gameObject.transform.position);
+        }
 
         if(KeyboardListener.isKeyPressed(GLFW_KEY_R) && stateMachine.getCurrentStateName().equals("Idle")){
             //stateMachine.trigger("startAttacking");
@@ -138,6 +148,13 @@ public class Player extends Entity {
             }
             isHealing = true;
         } else if (isHealing && !KeyboardListener.isKeyPressed(GLFW_KEY_H)){
+            if(playersLight != null){
+                playersLight.getComponent(Light.class).luminosity = 2;
+                playersLight.getComponent(Light.class).radius = 10;
+                playersLight.getComponent(Light.class).location.x = this.gameObject.transform.position.x;
+                playersLight.getComponent(Light.class).location.y = this.gameObject.transform.position.y;
+            }
+
             stateMachine.resetFrame();
             stateMachine.trigger("stopHealing");
             isHealing = false;
@@ -417,20 +434,32 @@ public class Player extends Entity {
         Field[] fields = null;
         Field[] firstArray = this.getClass().getDeclaredFields();
         Field[] secondArray = this.getClass().getSuperclass().getDeclaredFields();
+        Field[] thirdArray = null;
+        if(this.gameObject.getComponent(Light.class) != null){
+            thirdArray = this.gameObject.getComponent(Light.class).getClass().getSuperclass().getDeclaredFields();
+        }
+
         int fal = firstArray.length;
         int sal = secondArray.length;
-        fields = new Field[fal + sal];
+        int mal = (thirdArray != null) ? thirdArray.length : 0;
+
+        fields = new Field[fal + sal + mal];
         System.arraycopy(firstArray, 0, fields, 0, fal);
         System.arraycopy(secondArray, 0, fields, fal, sal);
+        if(thirdArray != null){
+            System.arraycopy(thirdArray, 0, fields, sal, mal);
+        }
 
         for(Field field : fields){
-            if(string.equals("Player") && counter < 23){
+            if(string.equals("Player") && counter < 28){
                 imgui(field);
-            }else  if(string.equals("Level Stats") && counter >= 23 && counter < 31){
+            }else  if(string.equals("Level Stats") && counter >= 28 && counter < 36){
                 imgui(field);
-            }else  if(string.equals("Stats") && counter >= 31 && counter < 51){
+            }else  if(string.equals("Stats") && counter >= 36 && counter < 56){
                 imgui(field);
-            }else  if(string.equals("Resistances") && counter >= 51){
+            }else  if(string.equals("Resistances") && counter >= 56 && counter < 70) {
+                imgui(field);
+            }else  if(string.equals("PlayersLight") && counter >= 70){
                 imgui(field);
             }
             counter++;

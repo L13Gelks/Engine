@@ -8,6 +8,7 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL15.*;
@@ -116,7 +117,6 @@ public class RenderBatch implements Comparable<RenderBatch>{
 
     public void render() {
         boolean rebufferData = false;
-
         for(int i = 0; i < numSprites; i++){
             SpriteRenderer spr = sprites[i];
             if(spr.isDirty()){
@@ -150,7 +150,19 @@ public class RenderBatch implements Comparable<RenderBatch>{
             glActiveTexture(GL_TEXTURE0 + i + 1);
             textures.get(i).bind();
         }
+
         shader.uploadIntArray("uTextures", textureSlots);
+        //Todo: test code for lights
+        if(Window.getScene().lightsNumber > 0){
+            shader.uploadInt("uLightsCount", Window.getScene().lightsNumber);
+            shader.uploadFloatArray("uLights", Window.getScene().lights);
+        } else if(Window.getScene().lightsNumber == 0) {
+            Arrays.fill(Window.getScene().lights, 0.0f);
+            shader.uploadInt("uLightsCount", Window.getScene().lightsNumber);
+            shader.uploadFloatArray("uLights", Window.getScene().lights);
+        }
+
+        shader.uploadFloat("uAmbientLight", Window.getImGuiLayer().world.getCurrentTimeOfDay());
 
         glBindVertexArray(vaoID);
         glEnableVertexAttribArray(0);

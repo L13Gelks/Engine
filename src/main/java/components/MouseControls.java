@@ -2,6 +2,7 @@ package components;
 
 import Engine.GameObject;
 import Engine.MouseListener;
+import Engine.Prefabs;
 import Engine.Window;
 import Game.entity.Player;
 import editor.PropertiesWindow;
@@ -46,11 +47,12 @@ public class MouseControls extends Component{
 
         newObj.getComponent(SpriteRenderer.class).setColor(new Vector4f(1, 1, 1, 1));
         newObj.removeComponent(NonPickable.class);
-        Window.getScene().addGameObjectToScene(newObj);
-        if(newObj.getComponent(Player.class) != null && LevelEditorSceneInitializer.isPlayerGenerated) {
+        if(newObj.getComponent(Player.class) != null){
+            LevelEditorSceneInitializer.isPlayerGenerated = true;
             holdingObject.destroy();
             holdingObject = null;
         }
+        Window.getScene().addGameObjectToScene(newObj);
     }
     @Override
     public void  editorUpdate(float dt){

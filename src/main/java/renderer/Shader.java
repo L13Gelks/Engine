@@ -172,4 +172,10 @@ public class Shader {
         use();
         glUniform1iv(varLocation, array);
     }
+
+    public void uploadFloatArray(String varName, float[] array) {
+        int varLocation = glGetUniformLocation(shaderProgramID, varName);
+        use();
+        glUniform1fv(varLocation, array);
+    }
 }

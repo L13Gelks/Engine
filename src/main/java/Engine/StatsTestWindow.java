@@ -26,6 +26,10 @@ public class StatsTestWindow {
         ImGui.begin("Resistances");
         player.imgui("Resistances");
         ImGui.end();
+
+        ImGui.begin("PlayersLight");
+        player.imgui("PlayersLight");
+        ImGui.end();
     }
 
     public void  setPlayer(Player player){

@@ -266,4 +266,14 @@ public class Prefabs {
 
         return chest;
     }
+
+    public static GameObject generateLight(){
+        AssetPool.addSpriteSheet("assets/Sprites/Tiles/light.png",
+                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Tiles/light.png"),
+                        512, 512, 1, 0));
+        SpriteSheet sprite = AssetPool.getSpriteSheet("assets/Sprites/Tiles/light.png");
+        GameObject light = generateSpriteObject(sprite.getSprite(0), 0.25f, 0.25f);
+        light.addComponent(new Light());
+        return light;
+    }
 }

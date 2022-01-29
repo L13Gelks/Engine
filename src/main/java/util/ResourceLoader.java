@@ -5,6 +5,7 @@ import components.SpriteSheet;
 public class ResourceLoader {
     public static void loadResources(){
         AssetPool.getShader("assets/shaders/default.glsl");
+        AssetPool.getShader("assets/shaders/shader.glsl");
         AssetPool.getTexture("assets/images/testImage.png");
 
         AssetPool.addSpriteSheet("assets/Images/gizmos.png",
@@ -73,5 +74,8 @@ public class ResourceLoader {
         AssetPool.addSpriteSheet("assets/Sprites/Tiles/world.png",
                 new SpriteSheet(AssetPool.getTexture("assets/Sprites/Tiles/world.png"),
                         256, 256, 33, 0));
+        AssetPool.addSpriteSheet("assets/Sprites/Tiles/light.png",
+                new SpriteSheet(AssetPool.getTexture("assets/Sprites/Tiles/light.png"),
+                        512, 512, 1, 0));
     }
 }

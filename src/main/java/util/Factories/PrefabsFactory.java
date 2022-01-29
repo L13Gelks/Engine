@@ -53,4 +53,12 @@ public class PrefabsFactory {
         textureCoordinates = chestSprite.getTextureCoordinates();
         this.generateObject(Prefabs.generateWoodenChest());
     }
+
+    public void generateLight(){
+        SpriteSheet light = AssetPool.getSpriteSheet("assets/Sprites/Tiles/light.png");
+        Sprite lightSprite = light.getSprite(0);
+        id = lightSprite.getTextureID();
+        textureCoordinates = lightSprite.getTextureCoordinates();
+        this.generateObject(Prefabs.generateLight());
+    }
 }

@@ -135,7 +135,9 @@ public class Window implements Observer {
     }
 
     public static Physics2D getPhysics() { return currentScene.getPhysics(); }
-
+    //Todo: Shader option only for testing
+    private transient  float changeTime = 0.6f;
+    private transient  float changeTimeLeft = 0.0f;
     public void loop(){
         //Init timers
         float beginTime = (float)glfwGetTime();
@@ -143,7 +145,10 @@ public class Window implements Observer {
         float dt = -1.0f;
 
         Shader defaultShader = AssetPool.getShader("assets/shaders/default.glsl");
+        Shader shader = AssetPool.getShader("assets/shaders/shader.glsl");
         Shader pickingShader = AssetPool.getShader("assets/shaders/pickingShader.glsl");
+        //Todo: Shader option only for testing
+        boolean changeShader = false;
         while(!glfwWindowShouldClose(glfwWindow)){
             //Poll Events
             glfwPollEvents();
@@ -169,8 +174,21 @@ public class Window implements Observer {
             glClear(GL_COLOR_BUFFER_BIT);
 
             //
+
             if(dt >= 0){
-                Renderer.bindShader(defaultShader);
+                //Todo: Shader option only for testing
+                if(KeyboardListener.isKeyPressed(GLFW_KEY_F1) && changeTimeLeft >= changeTime){
+                    changeTimeLeft = 0.0f;
+                    System.out.println("change shader");
+                    changeShader = !changeShader;
+                }else{
+                    changeTimeLeft += dt;
+                }
+                if(!changeShader){
+                    Renderer.bindShader(defaultShader);
+                }else{
+                    Renderer.bindShader(shader);
+                }
                 if(runtimePlaying){
                     currentScene.update(dt);
                 }else{

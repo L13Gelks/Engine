@@ -1,5 +1,6 @@
 package Engine;
 
+import Game.world.World;
 import editor.GameViewWindow;
 import editor.MenuBar;
 import editor.PropertiesWindow;
@@ -10,10 +11,7 @@ import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 import imgui.type.ImBoolean;
 import renderer.PickingTexture;
-import scenes.LevelSceneInitializer;
 import scenes.Scene;
-
-import java.awt.event.KeyListener;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -184,7 +182,7 @@ public class ImGuiLayer {
         imGuiGlfw.init(glfwWindow, false);
         imGuiGl3.init("#version 330 core");
     }
-
+    public World world = new World();
     public void editorUpdate(float dt, Scene currentScene){
         startFrame(dt);
 
@@ -207,10 +205,15 @@ public class ImGuiLayer {
         currentScene.imgui();
         //ImGui.showDemoWindow();
         gameViewWindow.imgui();
+
         statsTestWindow.setPlayer(currentScene.getSceneInitializer().getPlayer());
         statsTestWindow.imgui();
+
         enemyStatsTestWindow.setEnemy(currentScene.getEnemy());
         enemyStatsTestWindow.imgui();
+
+        world.imgui();
+        world.update(dt);
 
         endFrame();
     }
