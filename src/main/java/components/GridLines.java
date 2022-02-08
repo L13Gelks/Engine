@@ -14,27 +14,45 @@ public class GridLines extends  Component{
         Vector2f cameraPos = camera.position;
         Vector2f projectionSize = camera.getProjectionSize();
 
-        float firstX = ((int)Math.floor(cameraPos.x / Settings.GRID_WIDTH)) * Settings.GRID_HEIGHT;
+        float firstX = ((int)Math.floor(cameraPos.x / Settings.GRID_WIDTH)) * Settings.GRID_WIDTH;
         float firstY = ((int)Math.floor(cameraPos.y / Settings.GRID_HEIGHT)) * Settings.GRID_HEIGHT;
 
-        int numVtLines = (int)(projectionSize.x * camera.getZoom() / Settings.GRID_WIDTH) + 2;
-        int numHzLines = (int)(projectionSize.y * camera.getZoom() / Settings.GRID_HEIGHT) + 2;
+        int numVtLines = (int)(projectionSize.x * camera.getZoom() / Settings.GRID_WIDTH);
+        int numHzLines = (int)(projectionSize.y * camera.getZoom() / Settings.GRID_HEIGHT);
 
-        float width = (int)(projectionSize.x * camera.getZoom()) + (3 * Settings.GRID_WIDTH);
-        float height = (int)(projectionSize.y * camera.getZoom()) + (3 * Settings.GRID_HEIGHT);
+        float width = projectionSize.x * camera.getZoom();
+        float height = projectionSize.y * camera.getZoom();
+
+        //Todo: improve logic of drawing lines
+        float value;
+        if(firstY >= 0){
+            value = Math.abs(cameraPos.y / Settings.GRID_HEIGHT - (int) (cameraPos.y / Settings.GRID_HEIGHT));
+        }else{
+            value = 1 - Math.abs(cameraPos.y / Settings.GRID_HEIGHT - (int) (cameraPos.y / Settings.GRID_HEIGHT));
+        }
+        height += value / 4;
+
+        if(firstX >= 0){
+            value = Math.abs(cameraPos.x / Settings.GRID_WIDTH-(int)(cameraPos.x / Settings.GRID_WIDTH));
+        }else{
+            value = 1 - Math.abs(cameraPos.x / Settings.GRID_WIDTH-(int)(cameraPos.x / Settings.GRID_WIDTH));
+        }
+        width += value / 4;
+        //
 
         int maxLines = Math.max(numVtLines, numHzLines);
+
         Vector3f color = new Vector3f(0.2f, 0.2f, 0.2f);
         for (int i=0; i < maxLines; i++) {
             float x = firstX + (Settings.GRID_WIDTH * i);
             float y = firstY + (Settings.GRID_HEIGHT * i);
 
             if (i < numVtLines) {
-                DebugDraw.addLine2D(new Vector2f(x, firstY), new Vector2f(x, firstY + height), color);
+                //DebugDraw.addLine2D(new Vector2f(x, firstY), new Vector2f(x, firstY + height), color);
             }
 
             if (i < numHzLines) {
-                DebugDraw.addLine2D(new Vector2f(firstX, y), new Vector2f(firstX + width, y), color);
+                //DebugDraw.addLine2D(new Vector2f(firstX, y), new Vector2f(firstX + width, y), color);
             }
         }
     }

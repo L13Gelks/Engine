@@ -6,6 +6,9 @@ import components.Component;
 import components.ComponentDeserializer;
 import components.SpriteRenderer;
 import imgui.ImGui;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import renderer.DebugDraw;
 import util.AssetPool;
 
 import java.util.ArrayList;
@@ -61,14 +64,21 @@ public class GameObject {
     }
 
     public void editorUpdate(float dt){
-        for(int i = 0; i < components.size(); i++){
-            components.get(i).editorUpdate(dt);
+        //TODO: CHANGE CODE FOR THIS
+        List<GameObject> gos = Window.getImGuiLayer().getPropertiesWindow().getActiveGameObjects();
+        for(GameObject go : gos) {
+            Vector2f center = new Vector2f(go.transform.position);
+            DebugDraw.addBox2D(center, new Vector2f(.25f,.25f), go.transform.rotation, new Vector3f(0.4f, 0.2f, 0.2f), -1);
+        }
+
+        for (Component component : components) {
+            component.editorUpdate(dt);
         }
     }
 
     public void update(float dt){
-        for(int i = 0; i < components.size(); i++){
-            components.get(i).update(dt);
+        for (Component component : components) {
+            component.update(dt);
         }
     }
 

@@ -33,12 +33,13 @@ public class EditorCamera extends Component {
         } else if (MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_MIDDLE)) {
             Vector2f mousePos = MouseListener.getWorld();
             Vector2f delta = new Vector2f(mousePos).sub(this.clickOrigin);
+
             levelEditorCamera.position.sub(delta.mul(dt).mul(dragSensitivity));
             this.clickOrigin.lerp(mousePos, dt);
         }
 
         if (dragDebounce <= 0.0f && !MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_MIDDLE)) {
-            dragDebounce = 0.1f;
+            dragDebounce = 0.05f;
         }
 
         if (MouseListener.getScrollY() != 0.0f) {

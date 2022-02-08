@@ -58,7 +58,7 @@ public class PropertiesWindow {
     }
 
     public Engine.GameObject getActiveGameObject() {
-        return activeGameObjects.size() == 1 ? this.activeGameObjects.get(0) :
+        return activeGameObjects.size() >= 1 ? this.activeGameObjects.get(0) :
         null;
     }
 

@@ -5,6 +5,8 @@ import editor.PropertiesWindow;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
+import java.util.List;
+
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Gizmo extends Component {
@@ -17,7 +19,7 @@ public class Gizmo extends Component {
     private GameObject yAxisObject;
     private SpriteRenderer xAxisSprite;
     private SpriteRenderer yAxisSprite;
-    protected GameObject activeGameObject = null;
+    protected List<GameObject> activeGameObjects = null;
 
     private Vector2f xAxisOffset = new Vector2f(24.0f / 80.0f, -6.0f / 80.0f);
     private Vector2f yAxisOffset = new Vector2f(-7.0f / 80.0f, 21.0f / 80.0f);
@@ -68,8 +70,8 @@ public class Gizmo extends Component {
     public void editorUpdate(float dt) {
         if(!using) return;
 
-        this.activeGameObject = this.propertiesWindow.getActiveGameObject();
-        if (this.activeGameObject != null) {
+        this.activeGameObjects = this.propertiesWindow.getActiveGameObjects();
+        if (this.activeGameObjects != null && this.activeGameObjects.size() > 0) {
             this.setActive();
         } else {
             this.setInactive();
@@ -90,9 +92,9 @@ public class Gizmo extends Component {
             yAxisActive = false;
         }
 
-        if (this.activeGameObject != null) {
-            this.xAxisObject.transform.position.set(this.activeGameObject.transform.position);
-            this.yAxisObject.transform.position.set(this.activeGameObject.transform.position);
+        if (this.activeGameObjects != null && this.activeGameObjects.size() > 0) {
+            this.xAxisObject.transform.position.set(this.activeGameObjects.get(0).transform.position);
+            this.yAxisObject.transform.position.set(this.activeGameObjects.get(0).transform.position);
             this.xAxisObject.transform.position.add(this.xAxisOffset);
             this.yAxisObject.transform.position.add(this.yAxisOffset);
         }
@@ -104,7 +106,7 @@ public class Gizmo extends Component {
     }
 
     private void setInactive() {
-        this.activeGameObject = null;
+        this.activeGameObjects = null;
         this.xAxisSprite.setColor(new Vector4f(0, 0, 0, 0));
         this.yAxisSprite.setColor(new Vector4f(0, 0, 0, 0));
     }

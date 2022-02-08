@@ -2,7 +2,6 @@ package components;
 
 import Engine.GameObject;
 import Engine.MouseListener;
-import Engine.Prefabs;
 import Engine.Window;
 import Game.entity.Player;
 import editor.PropertiesWindow;
@@ -63,31 +62,31 @@ public class MouseControls extends Component{
         PickingTexture pickingTexture = Window.getImGuiLayer().getPropertiesWindow().getPickingTexture();
         Scene currentScene = Window.getScene();
 
-        if(holdingObject != null){
+        if(holdingObject != null) {
             holdingObject.transform.position.x = MouseListener.getWorldX();
             holdingObject.transform.position.y = MouseListener.getWorldY();
             holdingObject.transform.position.x = ((int)Math.floor(holdingObject.transform.position.x
                     / Settings.GRID_WIDTH) * Settings.GRID_WIDTH) + Settings.GRID_WIDTH / 2.0f;
             holdingObject.transform.position.y = ((int)Math.floor(holdingObject.transform.position.y
                     / Settings.GRID_HEIGHT) * Settings.GRID_HEIGHT) + Settings.GRID_HEIGHT / 2.0f;
-            if(MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)){
+            if(MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
                 float halfWidth = Settings.GRID_WIDTH / 2.0f;
                 float halfHeight = Settings.GRID_HEIGHT / 2.0f;
                 if(MouseListener.isDragging() &&
                         !blockInSquare(holdingObject.transform.position.x - halfWidth,
-                                holdingObject.transform.position.y - halfHeight)){
+                                holdingObject.transform.position.y - halfHeight)) {
                     place();
                 } else if (!MouseListener.isDragging() && debounce < 0) {
                     place();
                     debounce = debounceTime;
                 }
-
             }
 
-            if(MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT)){
+            if(MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT)) {
                 holdingObject.destroy();
                 holdingObject = null;
             }
+
         } else if (!MouseListener.isDragging() && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT) &&
                 debounce < 0) {
             int x = (int)MouseListener.getScreenX();
@@ -102,8 +101,10 @@ public class MouseControls extends Component{
             }
 
             debounce = 0.2f;
-        } else if (MouseListener.isDragging() && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)){
-            if(!boxSelectSet){
+        } else if (Window.getImGuiLayer().getPropertiesWindow().getActiveGameObjects().size() == 0 &&
+                MouseListener.isDragging() && MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
+            if(!boxSelectSet) {
+                DebugDraw.cleanDebugDrawBuffer();
                 Window.getImGuiLayer().getPropertiesWindow().clearSelected();
                 boxSelectStart = MouseListener.getScreen();
                 boxSelectSet = true;
@@ -141,6 +142,7 @@ public class MouseControls extends Component{
                     new Vector2i(screenStartX, screenStartY),
                     new Vector2i(screenEndX, screenEndY)
             );
+
             Set<Integer> uniqueGameObjectIds = new HashSet<>();
             for (float objId : gameObjectIds) {
                 uniqueGameObjectIds.add((int)objId);
@@ -154,6 +156,7 @@ public class MouseControls extends Component{
             }
         }
     }
+
     private boolean blockInSquare(float x, float y) {
         PropertiesWindow propertiesWindow = Window.getImGuiLayer().getPropertiesWindow();
         Vector2f start = new Vector2f(x, y);

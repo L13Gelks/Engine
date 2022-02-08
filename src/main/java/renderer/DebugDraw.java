@@ -16,12 +16,12 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class DebugDraw {
-    private static int MAX_LINES = 3000;
+    private static final int MAX_LINES = 1200;
 
-    private static List<Line2D> lines = new ArrayList<>();
+    private static final List<Line2D> lines = new ArrayList<>();
     //6 floats per vertex, 2 per line
-    private static float[] vertexArray = new float[MAX_LINES * 6 * 2];
-    private static Shader shader = AssetPool.getShader("assets/shaders/debugLine2D.glsl");
+    private static final float[] vertexArray = new float[MAX_LINES * 6 * 2];
+    private static final Shader shader = AssetPool.getShader("assets/shaders/debugLine2D.glsl");
     private static int vaoID;
     private static int vboID;
 
@@ -35,7 +35,7 @@ public class DebugDraw {
         //Create the vbo and buffer some memory
         vboID = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferData(GL_ARRAY_BUFFER, vertexArray.length * Float.BYTES, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, (long) vertexArray.length * Float.BYTES, GL_DYNAMIC_DRAW);
 
         //Enable the vertex array attributes
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * Float.BYTES, 0);
@@ -66,11 +66,16 @@ public class DebugDraw {
         }
     }
 
+    public static void cleanDebugDrawBuffer(){
+        Arrays.fill(vertexArray, 0.0f);
+    }
+
     public static void draw(){
         if(lines.size() <= 0){
             return;
         }
         int index = 0;
+
         for(Line2D line : lines){
             for(int i = 0; i < 2; i++){
                 Vector2f position = i == 0 ? line.getFrom() : line.getTo();
@@ -87,8 +92,10 @@ public class DebugDraw {
                 index += 6;
             }
         }
+
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, Arrays.copyOfRange(vertexArray, 0, lines.size() * 6 * 2));
+        //glBufferSubData(GL_ARRAY_BUFFER, 0, Arrays.copyOfRange(vertexArray, 0, lines.size() * 6 * 2));
+        glBufferSubData(GL_ARRAY_BUFFER, 0, vertexArray);
 
         //Use shader
         shader.use();
@@ -129,14 +136,11 @@ public class DebugDraw {
         addLine2D(from, to, color, 1);
     }
 
-    public static void addLine2D(Vector2f from, Vector2f to, Vector3f color, int lifeTime){
-
-
+    public static void addLine2D(Vector2f from, Vector2f to, Vector3f color, int lifeTime) {
         Camera camera = Window.getScene().camera();
-        Vector2f cameraLeft = new Vector2f(camera.position).add(new Vector2f(-2.0f, -2.0f));
+        Vector2f cameraLeft = new Vector2f(camera.position);// -2
         Vector2f cameraRight = new Vector2f(camera.position).
-                add(new Vector2f(camera.getProjectionSize()).mul(camera.getZoom())).
-                add(new Vector2f(4.0f, 4.0f));
+                add(new Vector2f(camera.getProjectionSize()).mul(camera.getZoom())); // 4
         boolean lineInView =
                 ((from.x >= cameraLeft.x && from.x <= cameraRight.x) && (from.y >= cameraLeft.y && from.y <= cameraRight.y)) ||
                         ((to.x >= cameraLeft.x && to.x <= cameraRight.x) && (to.y >= cameraLeft.y && to.y <= cameraRight.y));
@@ -151,7 +155,7 @@ public class DebugDraw {
     // ==================================================
     public static void addBox2D(Vector2f center, Vector2f dimensions, float rotation) {
         // TODO: ADD CONSTANTS FOR COMMON COLORS
-        addBox2D(center, dimensions, rotation, new Vector3f(0, 1, 0), 1);
+        addBox2D(center, dimensions, rotation, new Vector3f(0, 1, 1), 1);
     }
 
     public static void addBox2D(Vector2f center, Vector2f dimensions, float rotation, Vector3f color) {
